@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { BarChart3, MapPin, Search, Star, UserSearch } from "lucide-react";
 
+import globeUrl from "@/app/images/globe.png";
+
 const trending = ["Product Designer", "AI Engineering", "Dev-ops Engineer"];
 
 const stats = [
@@ -17,30 +19,15 @@ export function SiteHero() {
       data-slot="site-hero"
       className="relative overflow-hidden bg-[#010103]"
     >
-      {/* Magenta glow at the top */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[850px] bg-[radial-gradient(120%_90%_at_50%_-35%,#DC02CE_0%,rgba(220,2,206,0.55)_22%,rgba(220,2,206,0.18)_45%,transparent_70%)]"
-      />
-
-      {/* Starfield */}
+      {/* Hero artwork: pink glow, starfield and planet (from app/images/globe.png).
+          Pulled up so it sits behind the floating navbar like in the design. */}
       <Image
         aria-hidden
-        src="/hero-stars.png"
+        src={globeUrl}
         alt=""
-        width={1180}
-        height={731}
-        className="pointer-events-none absolute top-24 left-1/2 w-[900px] max-w-none -translate-x-1/2 opacity-90 md:top-32 md:w-[1180px]"
+        priority
+        className="pointer-events-none absolute -top-20 left-1/2 w-full max-w-[1440px] -translate-x-1/2 md:-top-[98px]"
       />
-
-      {/* Planet with glowing rim */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-[46%] left-1/2 w-[1300px] max-w-none -translate-x-1/2 md:top-[38%]"
-      >
-        <div className="absolute top-6 left-1/2 h-[1040px] w-[1236px] -translate-x-1/2 rounded-[50%] bg-[#5C53FE] blur-[2px]" />
-        <div className="relative mt-6 h-[1037px] w-[1208px] rounded-[50%] bg-[#010103]" />
-      </div>
 
       <div className="relative z-10 px-6 pt-28 md:pt-44">
         {/* Badge pill */}
@@ -137,7 +124,7 @@ export function SiteHero() {
         </div>
 
         {/* Assisting line + stats over the planet */}
-        <div className="mx-auto mt-40 max-w-[1320px] pb-16 md:mt-56">
+        <div className="mx-auto mt-56 max-w-[1320px] md:mt-[428px]">
           <p className="mx-auto max-w-[640px] text-center font-instrument text-3xl text-white/70 font-medium leading-[1.3] md:text-[40px]">
             Assisting over 15,000 job seekers find their dream positions.
           </p>

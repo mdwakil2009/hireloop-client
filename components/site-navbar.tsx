@@ -1,10 +1,11 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
+import Image from "next/image"
 import { useState } from "react"
 import { Menu, X } from "lucide-react"
 
+import logoUrl from "@/app/images/logo.png"
 import { cn } from "@/lib/utils"
 
 const links = [
@@ -27,7 +28,7 @@ export function SiteNavbar({ className }: { className?: string }) {
           {/* Logo */}
           <Link href="/" className="flex items-center" aria-label="Hireloop home">
             <Image
-              src="/logo.png"
+              src={logoUrl}
               width={114}
               height={32}
               alt="Hireloop"
