@@ -20,7 +20,7 @@ export function SiteNavbar({ className }: { className?: string }) {
   return (
     <header
       data-slot="site-navbar"
-      className={cn("sticky top-0 z-50 px-4 pt-4 md:px-6 md:pt-6", className)}
+      className={cn("sticky top-0 z-50 px-4 pt-4 md:px-6 md:pt-6 bg-black", className)}
     >
       <div className="mx-auto max-w-[1320px]">
         {/* Bar */}
