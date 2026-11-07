@@ -11,15 +11,37 @@ import { authClient } from "@/lib/auth-client"
 
 const fieldClasses =
   "h-12 w-full rounded-xl border border-white/20 bg-[#101010] px-4 text-base text-white outline-none transition-colors placeholder:text-white/50 hover:border-white/30 focus:border-[#5C53FE] focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
-
+type SignInData = {
+  email: string
+  password: string
+  remember?: string
+}
 export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [captured, setCaptured] = useState<Record<string, string> | null>(null)
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const formdata = new FormData(event.currentTarget)
-    const res = Object.fromEntries(formdata.entries())
+  event.preventDefault()
+
+  const formdata = new FormData(event.currentTarget)
+
+  const res = Object.fromEntries(formdata.entries()) as SignInData
+
+  const { data, error } = await authClient.signIn.email({
+    email: res.email,
+    password: res.password,
+    rememberMe: res.remember === "on",
+    callbackURL: "/",
+  })
+  if(data){
+    console.log("Sign In Done",data)
+  }
+  if (error) {
+    console.log("Sign In Error:", error)
+    return
+  }
+
+ 
 
     setCaptured(res as Record<string, string>)
     console.log("[sign-in] form data:", res)
