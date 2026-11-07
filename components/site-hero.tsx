@@ -1,8 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
 import { BarChart3, MapPin, Search, Star, UserSearch } from "lucide-react";
-
-import globeUrl from "@/app/images/globe.png";
 
 const trending = ["Product Designer", "AI Engineering", "Dev-ops Engineer"];
 
@@ -15,20 +12,7 @@ const stats = [
 
 export function SiteHero() {
   return (
-    <section
-      data-slot="site-hero"
-      className="relative overflow-hidden bg-[#010103]"
-    >
-      {/* Hero artwork: pink glow, starfield and planet (from app/images/globe.png).
-          Pulled up so it sits behind the floating navbar like in the design. */}
-      <Image
-        aria-hidden
-        src={globeUrl}
-        alt=""
-        priority
-        className="pointer-events-none absolute -top-20 left-1/2 w-full max-w-[1440px] -translate-x-1/2 md:-top-[98px]"
-      />
-
+    <section data-slot="site-hero" className="bg-[#010103]">
       <div className="relative z-10 px-6 pt-28 md:pt-44">
         {/* Badge pill */}
         <div className="flex items-center justify-center">
