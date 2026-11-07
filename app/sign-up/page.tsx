@@ -1,13 +1,16 @@
-import type { Metadata } from "next";
 
-import { SignUpForm } from "@/components/auth/sign-up-form";
+import type { Metadata } from "next"
+
+import { SignUpForm } from "@/components/auth/sign-up-form"
+
 
 export const metadata: Metadata = {
   title: "Sign Up | Hireloop",
   description: "Create a free Hireloop account and find your dream job today.",
-};
+}
 
 export default function SignUpPage() {
+  
   return (
     <main className="relative flex min-h-[calc(100svh-80px)] items-center justify-center overflow-hidden bg-[#010103] px-4 py-12 md:py-16">
       {/* Subtle magenta glow at the top, echoing the homepage */}
@@ -19,5 +22,5 @@ export default function SignUpPage() {
         <SignUpForm />
       </div>
     </main>
-  );
+  )
 }
