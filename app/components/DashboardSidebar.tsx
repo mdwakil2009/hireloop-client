@@ -8,6 +8,7 @@ import {
   ClipboardList,
   CreditCard,
   LayoutDashboard,
+  PlusCircle,
   Search,
   Settings,
   Users,
@@ -25,6 +26,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useSession } from "@/lib/auth-client"
+import { usePathname } from "next/navigation"
 
 type Role = "seeker" | "recruiter" | "admin"
 
@@ -61,11 +63,12 @@ const menuItemByRole: Record<Role, MenuItem[]> = {
     { id: "settings", name: "Settings", url: "/dashboard/seeker/settings", icon: Settings },
   ],
   recruiter: [
-    { id: "dashboard", name: "Dashboard", url: "/dashboard/recuiter", icon: LayoutDashboard },
-    { id: "my-company", name: "My Company", url: "/dashboard/recuiter/my-company", icon: Building2 },
-    { id: "manage-jobs", name: "Manage Jobs", url: "/dashboard/recuiter/manage-jobs", icon: Briefcase },
-    { id: "applications", name: "Applications", url: "/dashboard/recuiter/applications", icon: ClipboardList },
-    { id: "settings", name: "Settings", url: "/dashboard/recuiter/settings", icon: Settings },
+    { id: "dashboard", name: "Dashboard", url: "/dashboard/recruiter", icon: LayoutDashboard },
+    { id: "my-company", name: "My Company", url: "/dashboard/recruiter/my-company", icon: Building2 },
+    { id: "manage-jobs", name: "Manage Jobs", url: "/dashboard/recruiter/manage-jobs", icon: Briefcase },
+    { id: "add-jobs", name: "Add Jobs", url: "/dashboard/recruiter/add-jobs/new", icon: PlusCircle },
+    { id: "applications", name: "Applications", url: "/dashboard/recruiter/applications", icon: ClipboardList },
+    { id: "settings", name: "Settings", url: "/dashboard/recruiter/settings", icon: Settings },
   ],
   admin: [
     { id: "dashboard", name: "Dashboard", url: "/dashboard/admin", icon: LayoutDashboard },
@@ -77,9 +80,22 @@ const menuItemByRole: Record<Role, MenuItem[]> = {
   ],
 }
 
+const dashboardRoles: readonly Role[] = ["seeker", "recruiter", "admin"]
+
+/**
+ * Role from the dashboard route segment (/dashboard/<role>/…), so the sidebar
+ * matches the section you're browsing even before the session resolves.
+ */
+function roleFromPathname(pathname: string): Role | null {
+  const segment = pathname.split("/")[2]
+  return dashboardRoles.includes(segment as Role) ? (segment as Role) : null
+}
+
 export function DashboardSidebar() {
-  const { data: session, isPending } = useSession()
-  const role = (session?.user?.role as Role) || "seeker"
+  const { data: session } = useSession()
+  const pathname = usePathname()
+  const role =
+    roleFromPathname(pathname) ?? ((session?.user?.role as Role | undefined) || "seeker")
   const items = menuItemByRole[role]
 
   return (
