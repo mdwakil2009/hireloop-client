@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useSession } from "@/lib/auth-client"
 import { usePathname } from "next/navigation"
+import Link from "next/link";
 
 type Role = "seeker" | "recruiter" | "admin"
 
@@ -66,7 +67,7 @@ const menuItemByRole: Record<Role, MenuItem[]> = {
     { id: "dashboard", name: "Dashboard", url: "/dashboard/recruiter", icon: LayoutDashboard },
     { id: "my-company", name: "My Company", url: "/dashboard/recruiter/my-company", icon: Building2 },
     { id: "manage-jobs", name: "Manage Jobs", url: "/dashboard/recruiter/manage-jobs", icon: Briefcase },
-    { id: "add-jobs", name: "Add Jobs", url: "/dashboard/recruiter/add-jobs/new", icon: PlusCircle },
+    { id: "add-jobs", name: "Add Jobs", url: "/dashboard/recruiter/add-jobs", icon: PlusCircle },
     { id: "applications", name: "Applications", url: "/dashboard/recruiter/applications", icon: ClipboardList },
     { id: "settings", name: "Settings", url: "/dashboard/recruiter/settings", icon: Settings },
   ],
@@ -107,7 +108,7 @@ export function DashboardSidebar() {
           <SidebarMenu>
             {items.map((item) => (
               <SidebarMenuItem key={item.id}>
-                <SidebarMenuButton render={<a href={item.url} />}>
+                <SidebarMenuButton render={<Link href={item.url} />}>
                   <item.icon />
                   <span>{item.name}</span>
                 </SidebarMenuButton>

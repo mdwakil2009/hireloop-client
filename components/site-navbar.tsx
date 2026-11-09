@@ -11,17 +11,21 @@ import { useSession, signOut } from "@/lib/auth-client"
 import { Button } from "@base-ui/react"
 import { useRouter } from "next/navigation"
 
-const links = [
-  { label: "Browse Jobs", href: "/jobs" },
-  { label: "Company", href: "/companies" },
-  { label: "Pricing", href: "/pricing" },
-]
 
 export function SiteNavbar({ className }: { className?: string }) {
   const [open, setOpen] = useState(false)
   const { data: session } = useSession()
-  console.log(session)
+
   
+const links = [
+  { label: "Browse Jobs", href: "/jobs" },
+  { label: "Company", href: "/companies" },
+  { label: "Pricing", href: "/pricing" },
+ {
+  label: "Dashboard",
+  href: `/dashboard/${session?.user?.role || "seeker"}`
+}
+]
 
   const handleSignOut =async()=>{
     await signOut()
