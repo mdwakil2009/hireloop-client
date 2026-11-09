@@ -8,6 +8,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import logoUrl from "@/app/images/logo.png";
 import { signUp } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const fieldClasses =
   "h-12 w-full rounded-xl border border-white/20 bg-[#101010] px-4 text-base text-white outline-none transition-colors placeholder:text-white/50 hover:border-white/30 focus:border-[#5C53FE] focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50";
@@ -26,6 +27,7 @@ export function SignUpForm() {
   const [role, setRole] = useState<Role>("seeker");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
+  const router = useRouter()
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -54,7 +56,8 @@ export function SignUpForm() {
       password: data.password,
       role,
     });
-
+    router.refresh()
+    router.push("/")
     if (error) {
       setStatus("error");
       setMessage(error.message ?? "Could not create the account. Please try again.");

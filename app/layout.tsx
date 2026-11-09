@@ -45,7 +45,7 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <SiteNavbar />
+          
           {children}
         </ThemeProvider>
       </body>

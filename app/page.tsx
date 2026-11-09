@@ -2,6 +2,7 @@ import Image from "next/image";
 import { SiteHero } from "@/components/site-hero";
 
 import globeUrl from "@/app/images/globe.png";
+import { SiteNavbar } from "@/components/site-navbar";
 
 export default function Page() {
   return (
@@ -15,6 +16,7 @@ export default function Page() {
         priority
         className="pointer-events-none absolute -top-20 left-1/2 z-0 w-full max-w-[1440px] -translate-x-1/2 md:-top-[98px]"
       />
+      <SiteNavbar></SiteNavbar>
       <SiteHero />
     </main>
   );
