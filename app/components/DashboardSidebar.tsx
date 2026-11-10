@@ -92,7 +92,7 @@ function roleFromPathname(pathname: string): Role | null {
   return dashboardRoles.includes(segment as Role) ? (segment as Role) : null
 }
 
-export function DashboardSidebar() {
+export function DashboardSidebar() {                                                          
   const { data: session } = useSession()
   const pathname = usePathname()
   const role =
