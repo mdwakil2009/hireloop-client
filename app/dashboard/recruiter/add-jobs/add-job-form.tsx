@@ -1,7 +1,6 @@
+"use client"
 
-"use client";
-
-import { useState } from "react";
+import { useState } from "react"
 import {
   ArrowRight,
   Building2,
@@ -9,28 +8,42 @@ import {
   ChevronRight,
   MapPin,
   Globe2,
-} from "lucide-react";
+} from "lucide-react"
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-
+} from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { createJob } from "@/lib/actions/Jobs"
+export interface JobData {
+  title: string
+  companyName: string
+  category: string
+  jobType: string
+  remoteAllowed: boolean
+  location: string
+  deadline: string
+  salaryMin: string
+  salaryMax: string
+  salaryFrequency: string
+  responsibilities: string
+  qualifications: string
+}
 const fieldClasses =
-  "h-10 w-full rounded-lg border border-gray-200 bg-white text-sm text-gray-900 shadow-none placeholder:text-gray-400 focus-visible:border-violet-500 focus-visible:ring-2 focus-visible:ring-violet-500/20";
+  "h-10 w-full rounded-lg border border-gray-200 bg-white text-sm text-gray-900 shadow-none placeholder:text-gray-400 focus-visible:border-violet-500 focus-visible:ring-2 focus-visible:ring-violet-500/20"
 
-const labelClasses = "text-sm font-medium text-gray-700";
+const labelClasses = "text-sm font-medium text-gray-700"
 
 const sectionClasses =
-  "rounded-xl border border-gray-200 bg-white p-5 md:p-6 shadow-sm";
+  "rounded-xl border border-gray-200 bg-white p-5 md:p-6 shadow-sm"
 
 function SelectField({
   name,
@@ -38,10 +51,10 @@ function SelectField({
   placeholder,
   options,
 }: {
-  name: string;
-  defaultValue?: string;
-  placeholder?: string;
-  options: { value: string; label: string }[];
+  name: string
+  defaultValue?: string
+  placeholder?: string
+  options: { value: string; label: string }[]
 }) {
   return (
     <Select name={name} defaultValue={defaultValue}>
@@ -61,30 +74,31 @@ function SelectField({
         ))}
       </SelectContent>
     </Select>
-  );
+  )
 }
 
 export function AddJobForm() {
-  const [jobType, setJobType] = useState("Full-time");
-  const [remoteAllowed, setRemoteAllowed] = useState(false);
+  const [jobType, setJobType] = useState("Full-time")
+  const [remoteAllowed, setRemoteAllowed] = useState(false)
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
 
-    const formData = new FormData(event.currentTarget);
-
-    const data = {
+    const formData = new FormData(event.currentTarget)
+    const data: JobData = {
       ...Object.fromEntries(formData.entries()),
       jobType,
       remoteAllowed,
-    };
-
-    console.log("New job data:", data);
+    }
+    console.log("New job data:", data)
+ 
+    const result = await createJob(data)
+    console.log(result)
   }
 
   return (
     <div className="min-h-screen bg-white px-4 py-6 text-gray-900 md:px-8 md:py-8">
-    <div className="mx-auto w-full max-w-[1600px]">
+      <div className="mx-auto w-full max-w-[1600px]">
         <form onSubmit={handleSubmit}>
           {/* Header */}
           <div className="mb-7 flex flex-wrap items-center justify-between gap-5 border-b border-gray-200 pb-5">
@@ -92,9 +106,7 @@ export function AddJobForm() {
               <div className="mb-2 flex items-center gap-2 text-xs text-gray-400">
                 <span>Manage Jobs</span>
                 <ChevronRight size={13} />
-                <span className="text-violet-600">
-                  Create New Listing
-                </span>
+                <span className="text-violet-600">Create New Listing</span>
               </div>
 
               <h1 className="text-2xl font-semibold tracking-tight text-gray-900 md:text-3xl">
@@ -102,8 +114,8 @@ export function AddJobForm() {
               </h1>
 
               <p className="mt-2 text-sm text-gray-500">
-                Fill in the position specifications to attract qualified
-                talent across our network.
+                Fill in the position specifications to attract qualified talent
+                across our network.
               </p>
             </div>
           </div>
@@ -144,7 +156,7 @@ export function AddJobForm() {
                     <div className="relative">
                       <Building2
                         size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                        className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
                       />
 
                       <Input
@@ -166,12 +178,18 @@ export function AddJobForm() {
                       name="category"
                       placeholder="Select category"
                       options={[
-                        { value: "Engineering & Tech", label: "Engineering & Tech" },
+                        {
+                          value: "Engineering & Tech",
+                          label: "Engineering & Tech",
+                        },
                         { value: "Design", label: "Design" },
                         { value: "Marketing", label: "Marketing" },
                         { value: "Business", label: "Business" },
                         { value: "Finance", label: "Finance" },
-                        { value: "Customer Support", label: "Customer Support" },
+                        {
+                          value: "Customer Support",
+                          label: "Customer Support",
+                        },
                         { value: "Other", label: "Other" },
                       ]}
                     />
@@ -261,7 +279,7 @@ export function AddJobForm() {
                     <div className="relative">
                       <MapPin
                         size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                        className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
                       />
 
                       <Input
@@ -282,7 +300,7 @@ export function AddJobForm() {
                     <div className="relative">
                       <CalendarDays
                         size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                        className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
                       />
 
                       <Input
@@ -396,8 +414,8 @@ export function AddJobForm() {
                 type="reset"
                 variant="outline"
                 onClick={() => {
-                  setJobType("Full-time");
-                  setRemoteAllowed(false);
+                  setJobType("Full-time")
+                  setRemoteAllowed(false)
                 }}
                 className="h-10 rounded-lg border-gray-200 bg-white px-6 text-gray-600 hover:bg-gray-50"
               >
@@ -416,5 +434,5 @@ export function AddJobForm() {
         </form>
       </div>
     </div>
-  );
+  )
 }
