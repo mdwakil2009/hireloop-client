@@ -23,20 +23,7 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { createJob } from "@/lib/actions/Jobs"
-export interface JobData {
-  title: string
-  companyName: string
-  category: string
-  jobType: string
-  remoteAllowed: boolean
-  location: string
-  deadline: string
-  salaryMin: string
-  salaryMax: string
-  salaryFrequency: string
-  responsibilities: string
-  qualifications: string
-}
+import type { JobData } from "@/lib/job-data";
 const fieldClasses =
   "h-10 w-full rounded-lg border border-gray-200 bg-white text-sm text-gray-900 shadow-none placeholder:text-gray-400 focus-visible:border-violet-500 focus-visible:ring-2 focus-visible:ring-violet-500/20"
 
@@ -85,10 +72,20 @@ export function AddJobForm() {
     event.preventDefault()
 
     const formData = new FormData(event.currentTarget)
+    const get = (key: string) => String(formData.get(key) ?? "")
     const data: JobData = {
-      ...Object.fromEntries(formData.entries()),
+      title: get("title"),
+      companyName: get("companyName"),
+      category: get("category"),
       jobType,
       remoteAllowed,
+      location: get("location"),
+      deadline: get("deadline"),
+      salaryMin: get("salaryMin"),
+      salaryMax: get("salaryMax"),
+      salaryFrequency: get("salaryFrequency"),
+      responsibilities: get("responsibilities"),
+      qualifications: get("qualifications"),
     }
     console.log("New job data:", data)
  
@@ -98,7 +95,7 @@ export function AddJobForm() {
 
   return (
     <div className="min-h-screen bg-white px-4 py-6 text-gray-900 md:px-8 md:py-8">
-      <div className="mx-auto w-full max-w-[1600px]">
+      <div className="mx-auto w-full max-w-5xl">
         <form onSubmit={handleSubmit}>
           {/* Header */}
           <div className="mb-7 flex flex-wrap items-center justify-between gap-5 border-b border-gray-200 pb-5">
@@ -231,7 +228,7 @@ export function AddJobForm() {
                   <span className="h-2 w-2 rounded-full bg-violet-600" />
                   <h2 className="text-base font-semibold text-gray-900">
                     2. Location, Compensation & Timeline
-                  </h2>
+                  </h2> 
                 </div>
 
                 {/* Remote Toggle */}
