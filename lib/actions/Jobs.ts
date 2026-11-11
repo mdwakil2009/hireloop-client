@@ -12,3 +12,10 @@ export const createJob = async(data:JobData)=>{
         })
         return response.json()
 }
+
+export  const deleteJob = async(jobId:string)=>{
+        const response = await fetch(`${BASE_URL}/add-jobs/${jobId}`,{
+                method:"DELETE"
+        })
+        return response.json()
+}  

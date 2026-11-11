@@ -1,6 +1,5 @@
-
-import type { Metadata } from "next";
-import Link from "next/link";
+import type { Metadata } from "next"
+import Link from "next/link"
 import {
   Plus,
   Eye,
@@ -14,10 +13,9 @@ import {
   Workflow,
   Pencil,
   CalendarDays,
-  BriefcaseBusiness,
-} from "lucide-react";
+} from "lucide-react"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -25,10 +23,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/table"
+import { getJobs } from "@/lib/api/jobs"
+import { DeleteJobDialog } from "@/app/components/DeleteJobDialog"
 
-// Job Data Type
-interface JobData {
+export interface JobData {
+  _id: string;
   title: string;
   companyName: string;
   category: string;
@@ -43,104 +43,20 @@ interface JobData {
   qualifications: string;
 }
 
-// All Dummy Data in One File
-const dummyJobs: JobData[] = [
-  {
-    title: "Frontend Developer",
-    companyName: "TechNova Solutions",
-    category: "Engineering",
-    jobType: "Full-time",
-    remoteAllowed: true,
-    location: "Dhaka, Bangladesh",
-    deadline: "2026-12-15",
-    salaryMin: "35000",
-    salaryMax: "60000",
-    salaryFrequency: "Monthly",
-    responsibilities:
-      "Build responsive websites using React and Next.js.",
-    qualifications:
-      "JavaScript, TypeScript, React and Tailwind CSS.",
-  },
-  {
-    title: "UI/UX Designer",
-    companyName: "Creative Studio",
-    category: "Design",
-    jobType: "Full-time",
-    remoteAllowed: false,
-    location: "Gulshan, Dhaka",
-    deadline: "2026-12-20",
-    salaryMin: "40000",
-    salaryMax: "70000",
-    salaryFrequency: "Monthly",
-    responsibilities:
-      "Design modern and user-friendly interfaces.",
-    qualifications:
-      "Figma, UI/UX Design and Prototyping.",
-  },
-  {
-    title: "Backend Developer",
-    companyName: "CloudTech BD",
-    category: "Engineering",
-    jobType: "Full-time",
-    remoteAllowed: true,
-    location: "Remote",
-    deadline: "2026-12-25",
-    salaryMin: "45000",
-    salaryMax: "80000",
-    salaryFrequency: "Monthly",
-    responsibilities:
-      "Develop APIs and maintain backend services.",
-    qualifications:
-      "Node.js, Express.js, MongoDB and REST APIs.",
-  },
-  {
-    title: "Digital Marketing Executive",
-    companyName: "Growthify",
-    category: "Marketing",
-    jobType: "Part-time",
-    remoteAllowed: false,
-    location: "Mirpur, Dhaka",
-    deadline: "2026-11-05",
-    salaryMin: "20000",
-    salaryMax: "30000",
-    salaryFrequency: "Monthly",
-    responsibilities:
-      "Manage digital marketing campaigns.",
-    qualifications:
-      "SEO, Social Media Marketing and Communication.",
-  },
-  {
-    title: "QA Automation Engineer",
-    companyName: "SoftVision Ltd.",
-    category: "Quality Assurance",
-    jobType: "Contract",
-    remoteAllowed: true,
-    location: "Remote",
-    deadline: "2026-12-30",
-    salaryMin: "40000",
-    salaryMax: "65000",
-    salaryFrequency: "Monthly",
-    responsibilities:
-      "Test applications and automate quality checks.",
-    qualifications:
-      "JavaScript, API Testing and Automation Testing.",
-  },
-];
-
 export const metadata: Metadata = {
   title: "Manage Jobs | Hireloop",
   description: "Manage all your job posts.",
-};
+}
 
 // Check Job Status from Deadline
 function isJobActive(deadline: string) {
-  const today = new Date().toISOString().split("T")[0];
-  return deadline >= today;
+  const today = new Date().toISOString().split("T")[0]
+  return deadline >= today
 }
 
 // Status Component
 function StatusPill({ deadline }: { deadline: string }) {
-  const active = isJobActive(deadline);
+  const active = isJobActive(deadline)
 
   return (
     <span
@@ -157,33 +73,33 @@ function StatusPill({ deadline }: { deadline: string }) {
       />
       {active ? "Active" : "Expired"}
     </span>
-  );
+  )
 }
 
 // Job Category Icon
 function JobIcon({ category }: { category: string }) {
-  const value = category.toLowerCase();
+  const value = category.toLowerCase()
 
   if (value.includes("design")) {
-    return <Palette className="size-4" />;
+    return <Palette className="size-4" />
   }
 
   if (value.includes("marketing")) {
-    return <Megaphone className="size-4" />;
+    return <Megaphone className="size-4" />
   }
 
   if (value.includes("quality")) {
-    return <Workflow className="size-4" />;
+    return <Workflow className="size-4" />
   }
 
-  return <Code2 className="size-4" />;
+  return <Code2 className="size-4" />
 }
 
 // Format Salary
 function formatSalary(job: JobData) {
   return `৳${Number(job.salaryMin).toLocaleString()} - ৳${Number(
     job.salaryMax
-  ).toLocaleString()} / ${job.salaryFrequency}`;
+  ).toLocaleString()} / ${job.salaryFrequency}`
 }
 
 // Format Date
@@ -192,18 +108,14 @@ function formatDate(date: string) {
     day: "2-digit",
     month: "short",
     year: "numeric",
-  });
+  })
 }
 
-export default function ManageJobsPage() {
-  const activeJobs = dummyJobs.filter((job) =>
-    isJobActive(job.deadline)
-  ).length;
-
+export default async function ManageJobsPage() {
+  const dummyJobs: JobData[] = await getJobs()
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-white px-3 py-4 text-gray-900 sm:px-5 sm:py-5 lg:px-6">
       <div className="mx-auto max-w-6xl">
-
         {/* Header */}
         <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           <div className="min-w-0">
@@ -234,44 +146,6 @@ export default function ManageJobsPage() {
             New Job Post
           </Button>
         </div>
-
-        {/* Jobs Summary */}
-        <div className="mb-4 grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-            <div className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
-                <BriefcaseBusiness className="size-4" />
-              </div>
-
-              <div>
-                <p className="text-[11px] text-gray-500">
-                  Total Jobs
-                </p>
-                <p className="text-lg font-bold text-gray-900">
-                  {dummyJobs.length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-            <div className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-                <Globe className="size-4" />
-              </div>
-
-              <div>
-                <p className="text-[11px] text-gray-500">
-                  Active Jobs
-                </p>
-                <p className="text-lg font-bold text-gray-900">
-                  {activeJobs}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Desktop Table */}
         <div className="hidden overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm lg:block">
           <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
@@ -292,35 +166,35 @@ export default function ManageJobsPage() {
           <Table>
             <TableHeader>
               <TableRow className="h-10 border-b border-gray-100 bg-gray-50/80 hover:bg-gray-50/80">
-                <TableHead className="pl-4 text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                <TableHead className="pl-4 text-[10px] font-bold tracking-wide text-gray-500 uppercase">
                   Job & Dept
                 </TableHead>
 
-                <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
                   Company
                 </TableHead>
 
-                <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
                   Type
                 </TableHead>
 
-                <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
                   Salary
                 </TableHead>
 
-                <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
                   Applicants
                 </TableHead>
 
-                <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
                   Status
                 </TableHead>
 
-                <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
                   Deadline
                 </TableHead>
 
-                <TableHead className="pr-3 text-right text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                <TableHead className="pr-3 text-right text-[10px] font-bold tracking-wide text-gray-500 uppercase">
                   Actions
                 </TableHead>
               </TableRow>
@@ -372,13 +246,13 @@ export default function ManageJobsPage() {
                   </TableCell>
 
                   <TableCell>
-                    <span className="inline-flex whitespace-nowrap rounded-md bg-gray-100 px-2 py-1 text-[10px] font-medium text-gray-600">
+                    <span className="inline-flex rounded-md bg-gray-100 px-2 py-1 text-[10px] font-medium whitespace-nowrap text-gray-600">
                       {job.jobType}
                     </span>
                   </TableCell>
 
                   <TableCell>
-                    <p className="whitespace-nowrap text-[10px] font-medium text-gray-700">
+                    <p className="text-[10px] font-medium whitespace-nowrap text-gray-700">
                       {formatSalary(job)}
                     </p>
                   </TableCell>
@@ -395,7 +269,7 @@ export default function ManageJobsPage() {
                   </TableCell>
 
                   <TableCell>
-                    <p className="whitespace-nowrap text-xs text-gray-700">
+                    <p className="text-xs whitespace-nowrap text-gray-700">
                       {formatDate(job.deadline)}
                     </p>
                   </TableCell>
@@ -420,14 +294,7 @@ export default function ManageJobsPage() {
                         <Eye className="size-3.5" />
                       </Button>
 
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={`Delete ${job.title}`}
-                        className="size-7 text-gray-500 hover:bg-red-50 hover:text-red-600"
-                      >
-                        <Trash2 className="size-3.5" />
-                      </Button>
+                       <DeleteJobDialog job={job} ></DeleteJobDialog>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -451,7 +318,7 @@ export default function ManageJobsPage() {
                   </div>
 
                   <div className="min-w-0">
-                    <h3 className="break-words text-sm font-semibold leading-snug text-gray-800">
+                    <h3 className="text-sm leading-snug font-semibold break-words text-gray-800">
                       {job.title}
                     </h3>
                     <p className="mt-1 text-[11px] text-violet-600">
@@ -466,27 +333,21 @@ export default function ManageJobsPage() {
               {/* Card Details */}
               <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 border-t border-gray-100 pt-3">
                 <div className="min-w-0">
-                  <p className="text-[10px] text-gray-400">
-                    Company
-                  </p>
+                  <p className="text-[10px] text-gray-400">Company</p>
                   <p className="mt-0.5 truncate text-xs font-medium text-gray-700">
                     {job.companyName}
                   </p>
                 </div>
 
                 <div className="min-w-0">
-                  <p className="text-[10px] text-gray-400">
-                    Job Type
-                  </p>
+                  <p className="text-[10px] text-gray-400">Job Type</p>
                   <p className="mt-0.5 truncate text-xs font-medium text-gray-700">
                     {job.jobType}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">
-                    Location
-                  </p>
+                  <p className="text-[10px] text-gray-400">Location</p>
                   <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-gray-700">
                     {job.remoteAllowed ? (
                       <>
@@ -503,18 +364,14 @@ export default function ManageJobsPage() {
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">
-                    Salary
-                  </p>
+                  <p className="text-[10px] text-gray-400">Salary</p>
                   <p className="mt-0.5 text-xs font-medium text-gray-700">
                     {formatSalary(job)}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">
-                    Deadline
-                  </p>
+                  <p className="text-[10px] text-gray-400">Deadline</p>
                   <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-gray-700">
                     <CalendarDays className="size-3 text-gray-400" />
                     {formatDate(job.deadline)}
@@ -522,12 +379,9 @@ export default function ManageJobsPage() {
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">
-                    Applicants
-                  </p>
+                  <p className="text-[10px] text-gray-400">Applicants</p>
                   <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-violet-600">
-                    <Users className="size-3" />
-                    —
+                    <Users className="size-3" />—
                   </p>
                 </div>
               </div>
@@ -551,14 +405,7 @@ export default function ManageJobsPage() {
                   <Eye className="size-3.5" />
                 </Button>
 
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label={`Delete ${job.title}`}
-                  className="size-8 rounded-lg border-gray-200 text-gray-600 hover:border-red-200 hover:bg-red-50 hover:text-red-600"
-                >
-                  <Trash2 className="size-3.5" />
-                </Button>
+               <DeleteJobDialog dummyJobs={dummyJobs} ></DeleteJobDialog>
               </div>
             </div>
           ))}
@@ -591,5 +438,5 @@ export default function ManageJobsPage() {
         )}
       </div>
     </main>
-  );
+  )
 }
