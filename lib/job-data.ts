@@ -1,4 +1,13 @@
 /**
+ * Single shared place for all job types.
+ * Used by: add-jobs form, manage-jobs table, lib/actions/Jobs, lib/api/jobs,
+ * and app/components (DeleteJobDialog, JobStatusPill, JobCategoryIcon).
+ */
+
+/** Listing lifecycle shown in the Status column of the Manage Jobs table. */
+export type JobStatus = "Active" | "Inactive"
+
+/**
  * Shape of a job post — the exact payload collected by the Add Jobs form
  * (app/dashboard/recruiter/add-jobs) and POSTed by createJob
  * (lib/actions/Jobs) to the API.
@@ -17,20 +26,8 @@ export interface JobData {
   salaryFrequency: string;
   responsibilities: string;
   qualifications: string;
-  applicants: number;
-  status: "Active" | "Inactive";
-  posted: string;
-}
-
-
-
-/**
- * A JobData row as shown in the Manage Jobs table, with the listing
- * metadata the table adds on top of the stored form data.
- */
-export interface JobTableRow extends JobData {
-  id: string
-  /** Listing lifecycle shown in the Status column */
-  /** Display date, e.g. "Oct 24, 2023" */
-  posted: string
+  /** Listing metadata the API assigns — not collected by the Add Jobs form. */
+  applicants?: number;
+  status?: JobStatus;
+  posted?: string;
 }

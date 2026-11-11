@@ -26,8 +26,11 @@ import { createJob } from "@/lib/actions/Jobs"
 import type { JobData } from "@/lib/job-data";
 import { toast } from "@/components/ui/toast"
 import { useRouter } from "next/navigation"
-const fieldClasses =
-  "h-10 w-full rounded-lg border border-gray-200 bg-white text-sm text-gray-900 shadow-none placeholder:text-gray-400 focus-visible:border-violet-500 focus-visible:ring-2 focus-visible:ring-violet-500/20"
+// Base field styling shared by inputs, selects and textareas
+const fieldBase =
+  "w-full rounded-lg border border-gray-200 bg-white text-sm text-gray-900 shadow-none placeholder:text-gray-400 focus-visible:border-violet-500 focus-visible:ring-2 focus-visible:ring-violet-500/20"
+
+const fieldClasses = `${fieldBase} h-10`
 
 const labelClasses = "text-sm font-medium text-gray-700"
 
@@ -394,7 +397,7 @@ export function AddJobForm() {
                     required
                     rows={4}
                     placeholder="Describe the main responsibilities of this role..."
-                    className="min-h-28 resize-y rounded-lg border border-gray-200 bg-white px-3 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-violet-500 focus-visible:ring-2 focus-visible:ring-violet-500/20"
+                    className={`${fieldBase} h-auto min-h-28 resize-y px-3 py-3`}
                   />
                 </div>
 
@@ -410,7 +413,7 @@ export function AddJobForm() {
                     required
                     rows={4}
                     placeholder="• Required skills and experience&#10;• Educational qualifications&#10;• Additional requirements"
-                    className="min-h-28 resize-y rounded-lg border border-gray-200 bg-white px-3 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-violet-500 focus-visible:ring-2 focus-visible:ring-violet-500/20"
+                    className={`${fieldBase} h-auto min-h-28 resize-y px-3 py-3`}
                   />
                 </div>
               </CardContent>

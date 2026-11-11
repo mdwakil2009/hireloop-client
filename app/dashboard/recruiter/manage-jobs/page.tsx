@@ -1,18 +1,14 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import {
-  Plus,
-  Eye,
-  Trash2,
-  MapPin,
-  Globe,
-  Users,
-  Code2,
-  Palette,
-  Megaphone,
-  Workflow,
-  Pencil,
   CalendarDays,
+  Code2,
+  Eye,
+  Globe,
+  MapPin,
+  Pencil,
+  Plus,
+  Users,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -26,96 +22,25 @@ import {
 } from "@/components/ui/table"
 import { getJobs } from "@/lib/api/jobs"
 import { DeleteJobDialog } from "@/app/components/DeleteJobDialog"
-
-export interface JobData {
-  _id?: string;
-  title: string;
-  companyName: string;
-  category: string;
-  jobType: string;
-  remoteAllowed: boolean;
-  location: string;
-  deadline: string;
-  salaryMin: string;
-  salaryMax: string;
-  salaryFrequency: string;
-  responsibilities: string;
-  qualifications: string;
-  applicants: number;
-  status: "Active" | "Inactive";
-  posted: string;
-}
+import { JobCategoryIcon } from "@/app/components/JobCategoryIcon"
+import { JobStatusPill } from "@/app/components/JobStatusPill"
+import { formatDate, formatSalary } from "@/lib/job-utils"
+import type { JobData } from "@/lib/job-data"
 
 export const metadata: Metadata = {
   title: "Manage Jobs | Hireloop",
   description: "Manage all your job posts.",
 }
 
-// Check Job Status from Deadline
-function isJobActive(deadline: string) {
-  const today = new Date().toISOString().split("T")[0]
-  return deadline >= today
-}
+// Shared column-header style (small bold uppercase)
+const headClass = "text-[10px] font-bold tracking-wide text-gray-500 uppercase"
 
-// Status Component
-function StatusPill({ deadline }: { deadline: string }) {
-  const active = isJobActive(deadline)
-
-  return (
-    <span
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
-        active
-          ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100"
-          : "bg-gray-100 text-gray-500 ring-1 ring-gray-200"
-      }`}
-    >
-      <span
-        className={`size-1.5 rounded-full ${
-          active ? "bg-emerald-500" : "bg-gray-400"
-        }`}
-      />
-      {active ? "Active" : "Expired"}
-    </span>
-  )
-}
-
-// Job Category Icon
-function JobIcon({ category }: { category: string }) {
-  const value = category.toLowerCase()
-
-  if (value.includes("design")) {
-    return <Palette className="size-4" />
-  }
-
-  if (value.includes("marketing")) {
-    return <Megaphone className="size-4" />
-  }
-
-  if (value.includes("quality")) {
-    return <Workflow className="size-4" />
-  }
-
-  return <Code2 className="size-4" />
-}
-
-// Format Salary
-function formatSalary(job: JobData) {
-  return `৳${Number(job.salaryMin).toLocaleString()} - ৳${Number(
-    job.salaryMax
-  ).toLocaleString()} / ${job.salaryFrequency}`
-}
-
-// Format Date
-function formatDate(date: string) {
-  return new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  })
-}
+// Shared mobile-card detail styles
+const detailLabel = "text-[10px] text-gray-400"
+const detailValue = "mt-0.5 text-xs font-medium text-gray-700"
 
 export default async function ManageJobsPage() {
-  const dummyJobs: JobData[] = await getJobs()
+  const jobs: JobData[] = await getJobs()
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-white px-3 py-4 text-gray-900 sm:px-5 sm:py-5 lg:px-6">
       <div className="mx-auto max-w-6xl">
@@ -162,57 +87,43 @@ export default async function ManageJobsPage() {
             </div>
 
             <span className="rounded-md bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-600">
-              {dummyJobs.length} Listings
+              {jobs.length} Listings
             </span>
           </div>
 
           <Table>
             <TableHeader>
               <TableRow className="h-10 border-b border-gray-100 bg-gray-50/80 hover:bg-gray-50/80">
-                <TableHead className="pl-4 text-[10px] font-bold tracking-wide text-gray-500 uppercase">
-                  Job & Dept
-                </TableHead>
+                <TableHead className={`${headClass} pl-4`}>Job & Dept</TableHead>
 
-                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
-                  Company
-                </TableHead>
+                <TableHead className={headClass}>Company</TableHead>
 
-                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
-                  Type
-                </TableHead>
+                <TableHead className={headClass}>Type</TableHead>
 
-                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
-                  Salary
-                </TableHead>
+                <TableHead className={headClass}>Salary</TableHead>
 
-                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
-                  Applicants
-                </TableHead>
+                <TableHead className={headClass}>Applicants</TableHead>
 
-                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
-                  Status
-                </TableHead>
+                <TableHead className={headClass}>Status</TableHead>
 
-                <TableHead className="text-[10px] font-bold tracking-wide text-gray-500 uppercase">
-                  Deadline
-                </TableHead>
+                <TableHead className={headClass}>Deadline</TableHead>
 
-                <TableHead className="pr-3 text-right text-[10px] font-bold tracking-wide text-gray-500 uppercase">
+                <TableHead className={`${headClass} pr-3 text-right`}>
                   Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {dummyJobs.map((job, index) => (
+              {jobs.map((job, index) => (
                 <TableRow
-                  key={`${job.title}-${index}`}
+                  key={job._id || `${job.title}-${index}`}
                   className="h-[66px] border-b border-gray-100 transition-colors hover:bg-violet-50/30"
                 >
                   <TableCell className="pl-4">
                     <div className="flex items-center gap-2.5">
                       <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
-                        <JobIcon category={job.category} />
+                        <JobCategoryIcon category={job.category} />
                       </div>
 
                       <div className="min-w-0">
@@ -268,7 +179,7 @@ export default async function ManageJobsPage() {
                   </TableCell>
 
                   <TableCell>
-                    <StatusPill deadline={job.deadline} />
+                    <JobStatusPill deadline={job.deadline} />
                   </TableCell>
 
                   <TableCell>
@@ -297,7 +208,7 @@ export default async function ManageJobsPage() {
                         <Eye className="size-3.5" />
                       </Button>
 
-                       <DeleteJobDialog job={job} ></DeleteJobDialog>
+                      <DeleteJobDialog job={job} />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -308,16 +219,16 @@ export default async function ManageJobsPage() {
 
         {/* Mobile & Tablet Cards */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden">
-          {dummyJobs.map((job, index) => (
+          {jobs.map((job, index) => (
             <div
-              key={`${job.title}-${index}`}
+              key={job._id || `${job.title}-${index}`}
               className="min-w-0 rounded-xl border border-gray-200 bg-white p-3.5 shadow-sm transition-all hover:border-violet-200 hover:shadow-md"
             >
               {/* Card Header */}
               <div className="flex items-start justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-2.5">
                   <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
-                    <JobIcon category={job.category} />
+                    <JobCategoryIcon category={job.category} />
                   </div>
 
                   <div className="min-w-0">
@@ -330,28 +241,24 @@ export default async function ManageJobsPage() {
                   </div>
                 </div>
 
-                <StatusPill deadline={job.deadline} />
+                <JobStatusPill deadline={job.deadline} />
               </div>
 
               {/* Card Details */}
               <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 border-t border-gray-100 pt-3">
                 <div className="min-w-0">
-                  <p className="text-[10px] text-gray-400">Company</p>
-                  <p className="mt-0.5 truncate text-xs font-medium text-gray-700">
-                    {job.companyName}
-                  </p>
+                  <p className={detailLabel}>Company</p>
+                  <p className={`${detailValue} truncate`}>{job.companyName}</p>
                 </div>
 
                 <div className="min-w-0">
-                  <p className="text-[10px] text-gray-400">Job Type</p>
-                  <p className="mt-0.5 truncate text-xs font-medium text-gray-700">
-                    {job.jobType}
-                  </p>
+                  <p className={detailLabel}>Job Type</p>
+                  <p className={`${detailValue} truncate`}>{job.jobType}</p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">Location</p>
-                  <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-gray-700">
+                  <p className={detailLabel}>Location</p>
+                  <p className={`${detailValue} flex items-center gap-1`}>
                     {job.remoteAllowed ? (
                       <>
                         <Globe className="size-3 text-gray-400" />
@@ -367,22 +274,20 @@ export default async function ManageJobsPage() {
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">Salary</p>
-                  <p className="mt-0.5 text-xs font-medium text-gray-700">
-                    {formatSalary(job)}
-                  </p>
+                  <p className={detailLabel}>Salary</p>
+                  <p className={detailValue}>{formatSalary(job)}</p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">Deadline</p>
-                  <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-gray-700">
+                  <p className={detailLabel}>Deadline</p>
+                  <p className={`${detailValue} flex items-center gap-1`}>
                     <CalendarDays className="size-3 text-gray-400" />
                     {formatDate(job.deadline)}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">Applicants</p>
+                  <p className={detailLabel}>Applicants</p>
                   <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-violet-600">
                     <Users className="size-3" />—
                   </p>
@@ -408,14 +313,14 @@ export default async function ManageJobsPage() {
                   <Eye className="size-3.5" />
                 </Button>
 
-               <DeleteJobDialog job={job} ></DeleteJobDialog>
+                <DeleteJobDialog job={job} />
               </div>
             </div>
           ))}
         </div>
 
         {/* Empty State */}
-        {dummyJobs.length === 0 && (
+        {jobs.length === 0 && (
           <div className="mt-4 rounded-xl border border-dashed border-gray-300 bg-white px-4 py-12 text-center shadow-sm">
             <div className="mx-auto flex size-11 items-center justify-center rounded-full bg-violet-50 text-violet-600">
               <Code2 className="size-5" />
