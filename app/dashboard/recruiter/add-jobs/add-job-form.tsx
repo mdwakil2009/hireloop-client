@@ -24,6 +24,8 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { createJob } from "@/lib/actions/Jobs"
 import type { JobData } from "@/lib/job-data";
+import { toast } from "@/components/ui/toast"
+import { useRouter } from "next/navigation"
 const fieldClasses =
   "h-10 w-full rounded-lg border border-gray-200 bg-white text-sm text-gray-900 shadow-none placeholder:text-gray-400 focus-visible:border-violet-500 focus-visible:ring-2 focus-visible:ring-violet-500/20"
 
@@ -67,6 +69,7 @@ function SelectField({
 export function AddJobForm() {
   const [jobType, setJobType] = useState("Full-time")
   const [remoteAllowed, setRemoteAllowed] = useState(false)
+  const router = useRouter()
 
  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -90,7 +93,15 @@ export function AddJobForm() {
     console.log("New job data:", data)
  
     const result = await createJob(data)
-    console.log(result)
+    if(result.insertedId){
+      console.log(result)
+       toast.add({
+        title: "Job Created",
+        description: "The Job Has Been Successfully Created ",
+      })
+      router.push("/dashboard/recruiter/manage-jobs")
+
+    }
   }
 
   return (

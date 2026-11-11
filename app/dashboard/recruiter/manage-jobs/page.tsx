@@ -28,7 +28,7 @@ import { getJobs } from "@/lib/api/jobs"
 import { DeleteJobDialog } from "@/app/components/DeleteJobDialog"
 
 export interface JobData {
-  _id: string;
+  _id?: string;
   title: string;
   companyName: string;
   category: string;
@@ -41,6 +41,9 @@ export interface JobData {
   salaryFrequency: string;
   responsibilities: string;
   qualifications: string;
+  applicants: number;
+  status: "Active" | "Inactive";
+  posted: string;
 }
 
 export const metadata: Metadata = {
@@ -405,7 +408,7 @@ export default async function ManageJobsPage() {
                   <Eye className="size-3.5" />
                 </Button>
 
-               <DeleteJobDialog dummyJobs={dummyJobs} ></DeleteJobDialog>
+               <DeleteJobDialog job={job} ></DeleteJobDialog>
               </div>
             </div>
           ))}

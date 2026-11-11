@@ -4,22 +4,25 @@
  * (lib/actions/Jobs) to the API.
  */
 export interface JobData {
-  _id: string
-  title: string
-  companyName: string
-  category: string
-  jobType: string
-  remoteAllowed: boolean
-  location: string
-  deadline: string
-  salaryMin: string
-  salaryMax: string
-  salaryFrequency: string
-  responsibilities: string
-  qualifications: string
+  _id?: string;
+  title: string;
+  companyName: string;
+  category: string;
+  jobType: string;
+  remoteAllowed: boolean;
+  location: string;
+  deadline: string;
+  salaryMin: string;
+  salaryMax: string;
+  salaryFrequency: string;
+  responsibilities: string;
+  qualifications: string;
+  applicants: number;
+  status: "Active" | "Inactive";
+  posted: string;
 }
 
-export type JobStatus = "active" | "closed"
+
 
 /**
  * A JobData row as shown in the Manage Jobs table, with the listing
@@ -28,7 +31,6 @@ export type JobStatus = "active" | "closed"
 export interface JobTableRow extends JobData {
   id: string
   /** Listing lifecycle shown in the Status column */
-  status: JobStatus
   /** Display date, e.g. "Oct 24, 2023" */
-  datePosted: string
+  posted: string
 }
