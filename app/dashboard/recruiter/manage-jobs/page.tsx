@@ -26,15 +26,121 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { dummyJobs, type JobTableRow } from "@/lib/job-data";
+
+// Job Data Type
+interface JobData {
+  title: string;
+  companyName: string;
+  category: string;
+  jobType: string;
+  remoteAllowed: boolean;
+  location: string;
+  deadline: string;
+  salaryMin: string;
+  salaryMax: string;
+  salaryFrequency: string;
+  responsibilities: string;
+  qualifications: string;
+}
+
+// All Dummy Data in One File
+const dummyJobs: JobData[] = [
+  {
+    title: "Frontend Developer",
+    companyName: "TechNova Solutions",
+    category: "Engineering",
+    jobType: "Full-time",
+    remoteAllowed: true,
+    location: "Dhaka, Bangladesh",
+    deadline: "2026-12-15",
+    salaryMin: "35000",
+    salaryMax: "60000",
+    salaryFrequency: "Monthly",
+    responsibilities:
+      "Build responsive websites using React and Next.js.",
+    qualifications:
+      "JavaScript, TypeScript, React and Tailwind CSS.",
+  },
+  {
+    title: "UI/UX Designer",
+    companyName: "Creative Studio",
+    category: "Design",
+    jobType: "Full-time",
+    remoteAllowed: false,
+    location: "Gulshan, Dhaka",
+    deadline: "2026-12-20",
+    salaryMin: "40000",
+    salaryMax: "70000",
+    salaryFrequency: "Monthly",
+    responsibilities:
+      "Design modern and user-friendly interfaces.",
+    qualifications:
+      "Figma, UI/UX Design and Prototyping.",
+  },
+  {
+    title: "Backend Developer",
+    companyName: "CloudTech BD",
+    category: "Engineering",
+    jobType: "Full-time",
+    remoteAllowed: true,
+    location: "Remote",
+    deadline: "2026-12-25",
+    salaryMin: "45000",
+    salaryMax: "80000",
+    salaryFrequency: "Monthly",
+    responsibilities:
+      "Develop APIs and maintain backend services.",
+    qualifications:
+      "Node.js, Express.js, MongoDB and REST APIs.",
+  },
+  {
+    title: "Digital Marketing Executive",
+    companyName: "Growthify",
+    category: "Marketing",
+    jobType: "Part-time",
+    remoteAllowed: false,
+    location: "Mirpur, Dhaka",
+    deadline: "2026-11-05",
+    salaryMin: "20000",
+    salaryMax: "30000",
+    salaryFrequency: "Monthly",
+    responsibilities:
+      "Manage digital marketing campaigns.",
+    qualifications:
+      "SEO, Social Media Marketing and Communication.",
+  },
+  {
+    title: "QA Automation Engineer",
+    companyName: "SoftVision Ltd.",
+    category: "Quality Assurance",
+    jobType: "Contract",
+    remoteAllowed: true,
+    location: "Remote",
+    deadline: "2026-12-30",
+    salaryMin: "40000",
+    salaryMax: "65000",
+    salaryFrequency: "Monthly",
+    responsibilities:
+      "Test applications and automate quality checks.",
+    qualifications:
+      "JavaScript, API Testing and Automation Testing.",
+  },
+];
 
 export const metadata: Metadata = {
   title: "Manage Jobs | Hireloop",
   description: "Manage all your job posts.",
 };
 
-function StatusPill({ status }: { status: JobTableRow["status"] }) {
-  const active = status === "active";
+// Check Job Status from Deadline
+function isJobActive(deadline: string) {
+  const today = new Date().toISOString().split("T")[0];
+  return deadline >= today;
+}
+
+// Status Component
+function StatusPill({ deadline }: { deadline: string }) {
+  const active = isJobActive(deadline);
 
   return (
     <span
@@ -54,6 +160,7 @@ function StatusPill({ status }: { status: JobTableRow["status"] }) {
   );
 }
 
+// Job Category Icon
 function JobIcon({ category }: { category: string }) {
   const value = category.toLowerCase();
 
@@ -72,7 +179,27 @@ function JobIcon({ category }: { category: string }) {
   return <Code2 className="size-4" />;
 }
 
+// Format Salary
+function formatSalary(job: JobData) {
+  return `৳${Number(job.salaryMin).toLocaleString()} - ৳${Number(
+    job.salaryMax
+  ).toLocaleString()} / ${job.salaryFrequency}`;
+}
+
+// Format Date
+function formatDate(date: string) {
+  return new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export default function ManageJobsPage() {
+  const activeJobs = dummyJobs.filter((job) =>
+    isJobActive(job.deadline)
+  ).length;
+
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-white px-3 py-4 text-gray-900 sm:px-5 sm:py-5 lg:px-6">
       <div className="mx-auto max-w-6xl">
@@ -115,8 +242,11 @@ export default function ManageJobsPage() {
               <div className="flex size-8 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
                 <BriefcaseBusiness className="size-4" />
               </div>
+
               <div>
-                <p className="text-[11px] text-gray-500">Total Jobs</p>
+                <p className="text-[11px] text-gray-500">
+                  Total Jobs
+                </p>
                 <p className="text-lg font-bold text-gray-900">
                   {dummyJobs.length}
                 </p>
@@ -129,10 +259,13 @@ export default function ManageJobsPage() {
               <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
                 <Globe className="size-4" />
               </div>
+
               <div>
-                <p className="text-[11px] text-gray-500">Active Jobs</p>
+                <p className="text-[11px] text-gray-500">
+                  Active Jobs
+                </p>
                 <p className="text-lg font-bold text-gray-900">
-                  {dummyJobs.filter((job) => job.status === "active").length}
+                  {activeJobs}
                 </p>
               </div>
             </div>
@@ -150,6 +283,7 @@ export default function ManageJobsPage() {
                 Manage and track your published jobs
               </p>
             </div>
+
             <span className="rounded-md bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-600">
               {dummyJobs.length} Listings
             </span>
@@ -161,21 +295,31 @@ export default function ManageJobsPage() {
                 <TableHead className="pl-4 text-[10px] font-bold uppercase tracking-wide text-gray-500">
                   Job & Dept
                 </TableHead>
+
                 <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
                   Company
                 </TableHead>
+
                 <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
                   Type
                 </TableHead>
+
+                <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                  Salary
+                </TableHead>
+
                 <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
                   Applicants
                 </TableHead>
+
                 <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
                   Status
                 </TableHead>
+
                 <TableHead className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
-                  Posted
+                  Deadline
                 </TableHead>
+
                 <TableHead className="pr-3 text-right text-[10px] font-bold uppercase tracking-wide text-gray-500">
                   Actions
                 </TableHead>
@@ -183,9 +327,9 @@ export default function ManageJobsPage() {
             </TableHeader>
 
             <TableBody>
-              {dummyJobs.map((job) => (
+              {dummyJobs.map((job, index) => (
                 <TableRow
-                  key={job.id}
+                  key={`${job.title}-${index}`}
                   className="h-[66px] border-b border-gray-100 transition-colors hover:bg-violet-50/30"
                 >
                   <TableCell className="pl-4">
@@ -193,6 +337,7 @@ export default function ManageJobsPage() {
                       <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
                         <JobIcon category={job.category} />
                       </div>
+
                       <div className="min-w-0">
                         <p className="max-w-[145px] truncate text-xs font-semibold text-gray-800">
                           {job.title}
@@ -209,6 +354,7 @@ export default function ManageJobsPage() {
                       <p className="max-w-[115px] truncate text-xs font-medium text-gray-800">
                         {job.companyName}
                       </p>
+
                       <p className="mt-1 flex items-center gap-1 text-[10px] text-gray-400">
                         {job.remoteAllowed ? (
                           <>
@@ -232,6 +378,12 @@ export default function ManageJobsPage() {
                   </TableCell>
 
                   <TableCell>
+                    <p className="whitespace-nowrap text-[10px] font-medium text-gray-700">
+                      {formatSalary(job)}
+                    </p>
+                  </TableCell>
+
+                  <TableCell>
                     <div className="flex items-center gap-1 text-xs text-violet-600">
                       <Users className="size-3.5" />
                       <span>—</span>
@@ -239,12 +391,12 @@ export default function ManageJobsPage() {
                   </TableCell>
 
                   <TableCell>
-                    <StatusPill status={job.status} />
+                    <StatusPill deadline={job.deadline} />
                   </TableCell>
 
                   <TableCell>
                     <p className="whitespace-nowrap text-xs text-gray-700">
-                      {job.datePosted}
+                      {formatDate(job.deadline)}
                     </p>
                   </TableCell>
 
@@ -286,9 +438,9 @@ export default function ManageJobsPage() {
 
         {/* Mobile & Tablet Cards */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden">
-          {dummyJobs.map((job) => (
+          {dummyJobs.map((job, index) => (
             <div
-              key={job.id}
+              key={`${job.title}-${index}`}
               className="min-w-0 rounded-xl border border-gray-200 bg-white p-3.5 shadow-sm transition-all hover:border-violet-200 hover:shadow-md"
             >
               {/* Card Header */}
@@ -308,27 +460,33 @@ export default function ManageJobsPage() {
                   </div>
                 </div>
 
-                <StatusPill status={job.status} />
+                <StatusPill deadline={job.deadline} />
               </div>
 
               {/* Card Details */}
               <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 border-t border-gray-100 pt-3">
                 <div className="min-w-0">
-                  <p className="text-[10px] text-gray-400">Company</p>
+                  <p className="text-[10px] text-gray-400">
+                    Company
+                  </p>
                   <p className="mt-0.5 truncate text-xs font-medium text-gray-700">
                     {job.companyName}
                   </p>
                 </div>
 
                 <div className="min-w-0">
-                  <p className="text-[10px] text-gray-400">Job Type</p>
+                  <p className="text-[10px] text-gray-400">
+                    Job Type
+                  </p>
                   <p className="mt-0.5 truncate text-xs font-medium text-gray-700">
                     {job.jobType}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">Location</p>
+                  <p className="text-[10px] text-gray-400">
+                    Location
+                  </p>
                   <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-gray-700">
                     {job.remoteAllowed ? (
                       <>
@@ -338,22 +496,35 @@ export default function ManageJobsPage() {
                     ) : (
                       <>
                         <MapPin className="size-3 text-gray-400" />
-                        On-site
+                        {job.location}
                       </>
                     )}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">Date Posted</p>
-                  <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-gray-700">
-                    <CalendarDays className="size-3 text-gray-400" />
-                    {job.datePosted}
+                  <p className="text-[10px] text-gray-400">
+                    Salary
+                  </p>
+                  <p className="mt-0.5 text-xs font-medium text-gray-700">
+                    {formatSalary(job)}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400">Applicants</p>
+                  <p className="text-[10px] text-gray-400">
+                    Deadline
+                  </p>
+                  <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-gray-700">
+                    <CalendarDays className="size-3 text-gray-400" />
+                    {formatDate(job.deadline)}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-[10px] text-gray-400">
+                    Applicants
+                  </p>
                   <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-violet-600">
                     <Users className="size-3" />
                     —
