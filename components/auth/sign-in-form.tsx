@@ -8,6 +8,7 @@ import { Eye, EyeOff } from "lucide-react"
 import logoUrl from "@/app/images/logo.png"
 import { cn } from "@/lib/utils"
 import { authClient } from "@/lib/auth-client"
+import { useSearchParams } from "next/navigation"
 
 const fieldClasses =
   "h-12 w-full rounded-xl border border-white/20 bg-[#101010] px-4 text-base text-white outline-none transition-colors placeholder:text-white/50 hover:border-white/30 focus:border-[#5C53FE] focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
@@ -17,6 +18,8 @@ type SignInData = {
   remember?: string
 }
 export function SignInForm() {
+  const searchParams = useSearchParams()
+  const  redirectTo = searchParams.get("redirectTo") ?? "/"
   const [showPassword, setShowPassword] = useState(false)
   const [captured, setCaptured] = useState<Record<string, string> | null>(null)
 
@@ -31,7 +34,7 @@ export function SignInForm() {
     email: res.email,
     password: res.password,
     rememberMe: res.remember === "on",
-    callbackURL: "/",
+    callbackURL:redirectTo,
   })
   if(data){
     console.log("Sign In Done",data)

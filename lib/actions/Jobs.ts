@@ -19,3 +19,15 @@ export  const deleteJob = async(jobId:string)=>{
         })
         return response.json()
 }  
+
+
+export const applyToJob = async(data:JobData)=>{
+        const response = await fetch(`${BASE_URL}/applications`,{
+                method:"POST",
+                headers:{
+                 "Content-Type": "application/json",
+                },
+                body:JSON.stringify(data)
+        })
+        return response.json()
+}

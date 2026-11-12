@@ -8,6 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default function SignInPage() {
+
   return (
     <main className="relative flex min-h-[calc(100svh-80px)] items-center justify-center overflow-hidden bg-[#010103] px-4 py-12 md:py-16">
       {/* Subtle magenta glow at the top, echoing the homepage */}

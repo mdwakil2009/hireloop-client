@@ -13,3 +13,7 @@ export const getJob = async (id: string): Promise<JobData | null> => {
         const jobs = await getJobs()
         return jobs.find((job) => job._id === id) ?? null
 }
+export const getJobById= async(jobId:string):Promise<JobData> =>{
+        const response = await fetch(`${BASE_URL}/add-jobs/${jobId}`)
+        return response.json()
+}
