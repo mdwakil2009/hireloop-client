@@ -1,4 +1,3 @@
-
 import { Bookmark, MapPin, Wallet } from "lucide-react"
 
 import { formatSalary } from "@/lib/job-utils"
@@ -11,7 +10,6 @@ const pillClasses =
 export function BrowseJobCard({ job }: { job: JobData }) {
   return (
     <article className="group flex h-full gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg sm:p-6">
-
       {/* Company logo */}
       <div
         aria-hidden
@@ -24,7 +22,7 @@ export function BrowseJobCard({ job }: { job: JobData }) {
         {/* Job title and bookmark */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="line-clamp-2 text-base font-bold leading-6 text-gray-900 transition-colors group-hover:text-emerald-700 sm:text-lg">
+            <h3 className="line-clamp-2 text-base leading-6 font-bold text-gray-900 transition-colors group-hover:text-emerald-700 sm:text-lg">
               {job.title}
             </h3>
 
@@ -61,9 +59,7 @@ export function BrowseJobCard({ job }: { job: JobData }) {
             {formatSalary(job)}
           </span>
 
-          <span className={pillClasses}>
-            {job.jobType}
-          </span>
+          <span className={pillClasses}>{job.jobType}</span>
 
           {job.remoteAllowed && (
             <span className="inline-flex min-h-8 items-center rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
