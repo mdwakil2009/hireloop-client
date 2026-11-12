@@ -1,24 +1,29 @@
+import Link from "next/link"
 import { Bookmark, MapPin, Wallet } from "lucide-react"
 
 import { formatSalary } from "@/lib/job-utils"
 import type { JobData } from "@/lib/job-data"
 
-// White theme pill styling
 const pillClasses =
   "inline-flex min-h-8 items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700"
 
 export function BrowseJobCard({ job }: { job: JobData }) {
   return (
-    <article className="group flex h-full gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg sm:p-6">
+    <article className="group relative flex h-full gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg sm:p-6">
+      {/* Clickable job details area */}
+      <Link href={`/browse-jobs/${job._id}`}
+        aria-label={`View details for ${job.title}`}
+        className="absolute inset-0 z-0 rounded-xl">
+      </Link>
       {/* Company logo */}
       <div
         aria-hidden
-        className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-xl font-bold text-gray-800 transition-colors group-hover:bg-gray-100 sm:size-16"
+        className="pointer-events-none relative z-10 flex size-14 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-xl font-bold text-gray-800 transition-colors group-hover:bg-gray-100 sm:size-16"
       >
         {job.companyName.charAt(0).toUpperCase()}
       </div>
 
-      <div className="min-w-0 flex-1">
+      <div className="pointer-events-none relative z-10 min-w-0 flex-1">
         {/* Job title and bookmark */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
@@ -46,7 +51,10 @@ export function BrowseJobCard({ job }: { job: JobData }) {
           <button
             type="button"
             aria-label={`Save ${job.title}`}
-            className="shrink-0 rounded-lg border border-gray-200 bg-white p-2 text-gray-500 transition-all hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+            className="pointer-events-auto relative z-20 shrink-0 rounded-lg border border-gray-200 bg-white p-2 text-gray-500 transition-all hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+            onClick={(event) => {
+              event.stopPropagation()
+            }}
           >
             <Bookmark className="size-4" />
           </button>
@@ -67,6 +75,11 @@ export function BrowseJobCard({ job }: { job: JobData }) {
             </span>
           )}
         </div>
+
+        {/* View Details */}
+        <p className="mt-4 text-sm font-semibold text-emerald-700">
+          View Details →
+        </p>
       </div>
     </article>
   )

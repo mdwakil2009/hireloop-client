@@ -52,6 +52,19 @@ export function toNumber(value: string | undefined): number | null {
   return Number.isFinite(parsed) ? parsed : null
 }
 
+/**
+ * Split a free-text field into bullet list items — the Add Jobs form
+ * collects responsibilities/qualifications with "•" or "-" lines.
+ */
+export function splitListItems(text: string | undefined): string[] {
+  if (!text) return []
+
+  return text
+    .split(/\n|•/)
+    .map((line) => line.replace(/^[-–—*\s]+/, "").trim())
+    .filter(Boolean)
+}
+
 /** Best available salary number for sorting (max first, then min). */
 export function salaryForSort(job: JobData, fallback: number): number {
   return toNumber(job.salaryMax) ?? toNumber(job.salaryMin) ?? fallback

@@ -7,3 +7,9 @@ export const getJobs = async (query = ""): Promise<JobData[]> => {
         const response = await fetch(`${BASE_URL}/add-jobs${query ? `?${query}` : ""}`)
         return response.json()
 }
+
+/** Fetch a single job by its _id (found within the full jobs list). */
+export const getJob = async (id: string): Promise<JobData | null> => {
+        const jobs = await getJobs()
+        return jobs.find((job) => job._id === id) ?? null
+}

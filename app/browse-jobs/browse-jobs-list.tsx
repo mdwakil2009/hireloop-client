@@ -171,7 +171,7 @@ export function BrowseJobsList({ jobs }: { jobs: JobData[] }) {
         {/* Jobs */}
         <div className="mt-4 flex flex-col gap-4">
           {filteredJobs.map((job) => (
-            <BrowseJobCard key={job._id ?? job.title} job={job} />
+            <BrowseJobCard  key={job._id ?? job.title} job={job} />
           ))}
         </div>
 
