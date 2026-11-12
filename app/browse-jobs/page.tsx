@@ -98,10 +98,12 @@ export default async function BrowseJobsPage({
             <div className="flex flex-col gap-6">
               <FilterGroup
                 title="Job Type"
+                mode="single"
                 options={buildFilterOptions(jobs, "jobType")}
               />
               <FilterGroup
                 title="Category"
+                mode="single"
                 options={buildFilterOptions(jobs, "category")}
               />
               <FilterGroup
