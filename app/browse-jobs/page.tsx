@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next"
 import { Search } from "lucide-react"
 
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
   description: "Browse all open job posts across the network.",
 }
 
-/** Count jobs per unique value of a field (for the filter checkboxes). */
+/** Count jobs per unique value of a field. */
 function buildFilterOptions(
   jobs: JobData[],
   field: "jobType" | "category"
@@ -36,7 +37,7 @@ function buildFilterOptions(
     .map(([label, count]) => ({ label, count }))
 }
 
-/** Remote/On-site options derived from the remoteAllowed field. */
+/** Remote/On-site options. */
 function workplaceOptions(jobs: JobData[]): FilterOption[] {
   const remote = jobs.filter((job) => job.remoteAllowed).length
 
@@ -47,7 +48,7 @@ function workplaceOptions(jobs: JobData[]): FilterOption[] {
 }
 
 const sortContentItem =
-  "text-white/90 focus:bg-white/10 focus:text-white"
+  "cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-black focus:bg-gray-100 focus:text-black data-[highlighted]:bg-gray-100 data-[highlighted]:text-black"
 
 export default async function BrowseJobsPage({
   searchParams,
@@ -55,43 +56,52 @@ export default async function BrowseJobsPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const search = await searchParams
-  const query = new URLSearchParams(search as Record<string, string>).toString()
+
+  const query = new URLSearchParams(
+    search as Record<string, string>
+  ).toString()
+
   const jobs = await getJobs(query)
 
   return (
-    <main className="min-h-svh bg-[#010103] px-4 py-8 text-white md:px-8">
+    <main className="min-h-svh bg-white px-4 py-8 text-black md:px-8">
       <div className="mx-auto max-w-6xl">
-        {/* Search bar — native GET submit keeps the searchParams flow working */}
+
+        {/* Search bar */}
         <form
           action="/browse-jobs"
-          className="flex flex-col gap-3 rounded-xl bg-[#141418] p-6 ring-1 ring-white/10 sm:flex-row"
+          className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:flex-row md:p-6"
         >
           <div className="relative flex-1">
-            <Search className="absolute top-1/2 left-4 size-4 -translate-y-1/2 text-[#8E9192]" />
+            <Search className="absolute top-1/2 left-4 size-4 -translate-y-1/2 text-black" />
+
             <Input
               type="search"
               name="search"
               defaultValue={
-                typeof search.search === "string" ? search.search : undefined
+                typeof search.search === "string"
+                  ? search.search
+                  : undefined
               }
               placeholder="Search by job title, keywords..."
               aria-label="Search jobs"
-              className="h-[52px] border-white/10 bg-[#1A1A1F] pl-11 text-base text-white placeholder:text-[#A0A0AB] md:h-[58px] md:text-base"
+              className="h-[52px] border-gray-300 bg-white pl-11 text-base text-black placeholder:text-gray-500 focus-visible:ring-2 focus-visible:ring-black md:h-[58px]"
             />
           </div>
 
           <Button
             type="submit"
-            className="h-[52px] rounded-lg bg-white px-6 text-[#0B0B0C] hover:bg-white/85 md:h-[58px]"
+            className="h-[52px] rounded-lg bg-black px-7 text-white transition-colors hover:bg-gray-800 md:h-[58px]"
           >
             Search Jobs
           </Button>
         </form>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[296px_1fr]">
+
           {/* Sidebar filters */}
-          <aside className="h-fit rounded-xl bg-[#141418] p-6 ring-1 ring-white/10">
-            <h3 className="mb-5 text-lg font-semibold text-[#EDEDEF]">
+          <aside className="h-fit rounded-xl border border-gray-200 bg-white p-5 shadow-sm md:p-6">
+            <h3 className="mb-5 text-lg font-bold text-black">
               Filters
             </h3>
 
@@ -101,11 +111,13 @@ export default async function BrowseJobsPage({
                 mode="single"
                 options={buildFilterOptions(jobs, "jobType")}
               />
+
               <FilterGroup
                 title="Category"
                 mode="single"
                 options={buildFilterOptions(jobs, "category")}
               />
+
               <FilterGroup
                 title="Workplace"
                 options={workplaceOptions(jobs)}
@@ -116,30 +128,52 @@ export default async function BrowseJobsPage({
           {/* Job listing */}
           <section>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-xl font-semibold text-[#EDEDEF]">
+              <h2 className="text-xl font-bold text-black">
                 Found {jobs.length} Professional Jobs
               </h2>
 
-              <div className="flex items-center gap-2 text-sm text-[#6E6E78]">
-                Sort by:
+              {/* Sort dropdown */}
+              <div className="flex items-center gap-2 text-sm font-medium text-black">
+                <span>Sort by:</span>
+
                 <Select defaultValue="recent">
                   <SelectTrigger
                     aria-label="Sort jobs"
-                    className="h-9 w-[150px] border-white/10 bg-[#0C0C0F] text-sm text-[#EDEDEF]"
+                    className="h-10 w-[160px] rounded-lg border border-gray-300 bg-white text-sm font-medium text-black shadow-sm hover:border-gray-500 focus:ring-2 focus:ring-black"
                   >
-                    <SelectValue />
+                    <SelectValue placeholder="Select option" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#141418] text-white ring-white/10">
-                    <SelectItem value="recent" className={sortContentItem}>
+
+                  <SelectContent
+                    position="popper"
+                    sideOffset={6}
+                    className="z-50 min-w-[180px] rounded-xl border border-gray-200 bg-white p-1.5 text-black shadow-xl"
+                  >
+                    <SelectItem
+                      value="recent"
+                      className={sortContentItem}
+                    >
                       Most Recent
                     </SelectItem>
-                    <SelectItem value="salary-high" className={sortContentItem}>
+
+                    <SelectItem
+                      value="salary-high"
+                      className={sortContentItem}
+                    >
                       Salary: High to Low
                     </SelectItem>
-                    <SelectItem value="salary-low" className={sortContentItem}>
+
+                    <SelectItem
+                      value="salary-low"
+                      className={sortContentItem}
+                    >
                       Salary: Low to High
                     </SelectItem>
-                    <SelectItem value="deadline" className={sortContentItem}>
+
+                    <SelectItem
+                      value="deadline"
+                      className={sortContentItem}
+                    >
                       Closing Soon
                     </SelectItem>
                   </SelectContent>
@@ -147,19 +181,24 @@ export default async function BrowseJobsPage({
               </div>
             </div>
 
+            {/* Jobs */}
             <div className="mt-4 flex flex-col gap-4">
               {jobs.map((job) => (
-                <BrowseJobCard key={job._id ?? job.title} job={job} />
+                <BrowseJobCard
+                  key={job._id ?? job.title}
+                  job={job}
+                />
               ))}
             </div>
 
             {/* Empty state */}
             {jobs.length === 0 && (
-              <div className="mt-4 rounded-xl bg-[#141418] px-4 py-14 text-center ring-1 ring-white/10">
-                <h3 className="text-base font-semibold text-[#EDEDEF]">
+              <div className="mt-4 rounded-xl border border-gray-200 bg-white px-4 py-14 text-center shadow-sm">
+                <h3 className="text-base font-bold text-black">
                   No Jobs Found
                 </h3>
-                <p className="mt-1 text-sm text-[#6E6E78]">
+
+                <p className="mt-1 text-sm text-gray-600">
                   Try a different search or clear the filters.
                 </p>
               </div>

@@ -1,59 +1,72 @@
-import { Bookmark } from "lucide-react"
+
+import { Bookmark, MapPin, Wallet } from "lucide-react"
 
 import { formatSalary } from "@/lib/job-utils"
 import type { JobData } from "@/lib/job-data"
 
-// Shared pill styling from the Figma job card (#1A1A1F fill, white/10 ring)
+// White theme pill styling
 const pillClasses =
-  "inline-flex h-[30px] items-center gap-2 rounded-md bg-[#1A1A1F] px-3 text-xs text-[#EDEDEF] ring-1 ring-white/10"
+  "inline-flex min-h-8 items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700"
 
-/**
- * Job card for the Browse Jobs grid (also reusable on seeker pages).
- * Pills: salary range, job type, and a green Remote badge when the
- * job allows remote work.
- */
 export function BrowseJobCard({ job }: { job: JobData }) {
   return (
-    <article className="flex gap-4 rounded-xl bg-[#141418] p-6 ring-1 ring-white/10 transition-colors hover:ring-white/20">
-      {/* Company logo box */}
+    <article className="group flex h-full gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg sm:p-6">
+
+      {/* Company logo */}
       <div
         aria-hidden
-        className="flex size-16 shrink-0 items-center justify-center rounded-lg bg-[#222228] text-xl font-semibold text-[#EDEDEF] ring-1 ring-white/[0.07]"
+        className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-xl font-bold text-gray-800 transition-colors group-hover:bg-gray-100 sm:size-16"
       >
-        {job.companyName.charAt(0)}
+        {job.companyName.charAt(0).toUpperCase()}
       </div>
 
       <div className="min-w-0 flex-1">
+        {/* Job title and bookmark */}
         <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h3 className="truncate text-lg font-semibold text-[#EDEDEF]">
+          <div className="min-w-0 flex-1">
+            <h3 className="line-clamp-2 text-base font-bold leading-6 text-gray-900 transition-colors group-hover:text-emerald-700 sm:text-lg">
               {job.title}
             </h3>
-            <p className="mt-1 truncate text-sm text-[#6E6E78]">
-              {job.companyName} •{" "}
-              {job.remoteAllowed
-                ? job.location.toLowerCase().includes("remote")
-                  ? job.location
-                  : `${job.location} (Remote)`
-                : job.location}
+
+            <p className="mt-1 truncate text-sm font-semibold text-gray-600">
+              {job.companyName}
             </p>
+
+            <div className="mt-2 flex min-w-0 items-center gap-1.5 text-sm text-gray-500">
+              <MapPin className="size-4 shrink-0 text-gray-400" />
+              <span className="truncate">
+                {job.remoteAllowed
+                  ? job.location.toLowerCase().includes("remote")
+                    ? job.location
+                    : `${job.location} (Remote)`
+                  : job.location}
+              </span>
+            </div>
           </div>
 
+          {/* Bookmark button */}
           <button
             type="button"
             aria-label={`Save ${job.title}`}
-            className="rounded-md p-1.5 text-[#8E9192] transition-colors hover:bg-white/5 hover:text-white"
+            className="shrink-0 rounded-lg border border-gray-200 bg-white p-2 text-gray-500 transition-all hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
           >
             <Bookmark className="size-4" />
           </button>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <span className={pillClasses}>{formatSalary(job)}</span>
-          <span className={pillClasses}>{job.jobType}</span>
+        {/* Job information badges */}
+        <div className="mt-5 flex flex-wrap items-center gap-2">
+          <span className={pillClasses}>
+            <Wallet className="size-3.5 text-gray-500" />
+            {formatSalary(job)}
+          </span>
+
+          <span className={pillClasses}>
+            {job.jobType}
+          </span>
 
           {job.remoteAllowed && (
-            <span className="inline-flex h-[30px] items-center gap-2 rounded-md bg-[#22C55E]/10 px-3 text-xs font-medium text-[#22C55E] ring-1 ring-[#22C55E]/30">
+            <span className="inline-flex min-h-8 items-center rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
               Remote
             </span>
           )}
