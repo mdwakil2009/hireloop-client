@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useRouter } from "next/navigation"
@@ -9,59 +8,69 @@ import { JobData } from "@/lib/job-data"
 import type { JobApplication } from "@/lib/application-data"
 
 import { applyToJob } from "@/lib/actions/Jobs"
+import { getApplications, getApplicationsCount } from "@/lib/api/applications"
 
-export function ApplyButton({job}:{job:JobData}) {
+export function ApplyButton({ job }: { job: JobData }) {
   const router = useRouter()
   const { data: session } = useSession()
 
   const user = session?.user
 
-  const handleApplyNow = async() => {
+  const handleApplyNow = async () => {
     if (!user) {
       router.push(`/sign-in?redirectTo=/browse-jobs/${job._id}`)
       return
-    }
-    else if(user.role=="seeker") {
+    } else if (user.role == "seeker") {
+      const countResult = await getApplicationsCount(`applicantId=${user.id}`)
+
+      console.log("Logged User ID:", user.id)
+      console.log("Count Result:", countResult)
+      console.log("Total Applications:", countResult.count)
+
+      if (countResult.count >= 5) {
+        console.log("Payment Condition Matched!")
+
+        router.push("/payment")
+        return
+      } else {
         // Full application record — job snapshot is copied now so the
         // My Applications list can render without looking the job up again
-        const  application:Omit<JobApplication,"_id"> ={
-                jobId:job._id as string,
-                userId:user.id,
-                email:user.email,
-                jobTitle:job.title,
-                companyName:job.companyName,
-                category:job.category,
-                jobType:job.jobType,
-                location:job.location,
-                remoteAllowed:job.remoteAllowed,
-                salaryMin:job.salaryMin,
-                salaryMax:job.salaryMax,
-                salaryFrequency:job.salaryFrequency,
-                deadline:job.deadline,
-                status:"Applied",
-                appliedAt:new Date().toISOString()
+        const application: Omit<JobApplication, "_id"> = {
+          jobId: job._id as string,
+          userId: user.id,
+          email: user.email,
+          jobTitle: job.title,
+          companyName: job.companyName,
+          category: job.category,
+          jobType: job.jobType,
+          location: job.location,
+          remoteAllowed: job.remoteAllowed,
+          salaryMin: job.salaryMin,
+          salaryMax: job.salaryMax,
+          salaryFrequency: job.salaryFrequency,
+          deadline: job.deadline,
+          status: "Applied",
+          appliedAt: new Date().toISOString(),
         }
-        const  result = await applyToJob(application)
-        if(result.insertedId){
-                toast.add({
-                        title:"Application Submitted",
-                        description:`You have successfully applied for ${job.title} at ${job.companyName}.`,
-                })
-                router.push("/dashboard/seeker/applications")
+        const result = await applyToJob(application)
+        if (result.insertedId) {
+          toast.add({
+            title: "Application Submitted",
+            description: `You have successfully applied for ${job.title} at ${job.companyName}.`,
+          })
+          router.push("/dashboard/seeker/applications")
+        } else {
+          toast.add({
+            title: "Application Failed",
+            description: "Something went wrong. Please try again.",
+          })
         }
-        else{
-                toast.add({
-                        title:"Application Failed",
-                        description:"Something went wrong. Please try again.",
-                })
-        }
-
-    }
-    else{
-        toast.add({
-                title:"Not Allowed",
-                description:"Only job seekers can apply for jobs.",
-        })
+      }
+    } else {
+      toast.add({
+        title: "Not Allowed",
+        description: "Only job seekers can apply for jobs.",
+      })
     }
 
     // TODO: এখানে logged-in user এর application logic লিখবে

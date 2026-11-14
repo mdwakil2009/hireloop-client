@@ -20,8 +20,11 @@ import {
 } from "@/components/ui/table"
 import { ApplicationStatusBadge } from "@/app/components/ApplicationStatusBadge"
 import { JobCategoryIcon } from "@/app/components/JobCategoryIcon"
-import { dummyApplications, type JobApplication } from "@/lib/application-data"
+import { type JobApplication } from "@/lib/application-data"
 import { formatRelativeTime } from "@/lib/job-utils"
+import { getApplications } from "@/lib/api/applications"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
 
 export const metadata: Metadata = {
   title: "My Applications | Hireloop",
@@ -31,10 +34,12 @@ export const metadata: Metadata = {
 // Shared column-header style (small bold uppercase, same as Manage Jobs)
 const headClass = "text-[10px] font-bold tracking-wide text-gray-500 uppercase"
 
-export default function MyApplicationPage() {
+export default async function MyApplicationPage() {
   // Dummy data for now — real applications are loaded from the API later
-  const applications: JobApplication[] = dummyApplications
-
+  const session =  await auth.api.getSession({
+          headers:await headers()
+        })
+        const applications: JobApplication[] = await getApplications(`applicantId=${session?.user.id}`)
   // Stats computed from the list so they stay correct when real data loads
   const total = applications.length
   const shortlisted = applications.filter(
