@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowLeft, BadgeCheck, Lock, ShieldCheck } from "lucide-react"
+import { ArrowLeft, BadgeCheck, ShieldCheck } from "lucide-react"
 
 import { Toaster } from "@/components/ui/toast"
 import { PayButton } from "@/app/components/PayButton"
