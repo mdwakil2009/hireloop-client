@@ -13,6 +13,18 @@ export const getApplications = async (
   const response = await fetch(`${BASE_URL}/applications${query}`)
   return response.json()
 }
+
+/**
+ * Applications for one job (recruiter's application review page).
+ * The backend does not filter by jobId yet, so the filtering happens
+ * here — swap to a server-side ?jobId= filter once it exists.
+ */
+export const getApplicationsByJob = async (
+  jobId: string
+): Promise<JobApplication[]> => {
+  const all = await getApplications()
+  return all.filter((application) => application.jobId === jobId)
+}
 export const getApplicationsCount = async (
     query: string
 ): Promise<{count:number}> => {

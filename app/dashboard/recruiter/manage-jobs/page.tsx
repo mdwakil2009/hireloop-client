@@ -26,6 +26,7 @@ import { JobCategoryIcon } from "@/app/components/JobCategoryIcon"
 import { JobStatusPill } from "@/app/components/JobStatusPill"
 import { formatDate, formatSalary } from "@/lib/job-utils"
 import type { JobData } from "@/lib/job-data"
+import GetSession from "@/lib/core/server"
 
 export const metadata: Metadata = {
   title: "Manage Jobs | Hireloop",
@@ -40,7 +41,8 @@ const detailLabel = "text-[10px] text-gray-400"
 const detailValue = "mt-0.5 text-xs font-medium text-gray-700"
 
 export default async function ManageJobsPage() {
-  const jobs: JobData[] = await getJobs()
+  const session = await GetSession()
+  const jobs: JobData[] = await getJobs(`recruiterId=${session?.user?.id}`)
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-white px-3 py-4 text-gray-900 sm:px-5 sm:py-5 lg:px-6">
       <div className="mx-auto max-w-6xl">
@@ -172,10 +174,14 @@ export default async function ManageJobsPage() {
                   </TableCell>
 
                   <TableCell>
-                    <div className="flex items-center gap-1 text-xs text-violet-600">
+                    <Link
+                      href={`/dashboard/recruiter/add-jobs/${job._id}/applications`}
+                      className="flex items-center gap-1 text-xs font-semibold text-violet-600 hover:underline"
+                      aria-label={`View applications for ${job.title}`}
+                    >
                       <Users className="size-3.5" />
-                      <span>—</span>
-                    </div>
+                      View Applications
+                    </Link>
                   </TableCell>
 
                   <TableCell>
@@ -286,11 +292,16 @@ export default async function ManageJobsPage() {
                   </p>
                 </div>
 
-                <div>
+                <div className="min-w-0">
                   <p className={detailLabel}>Applicants</p>
-                  <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-violet-600">
-                    <Users className="size-3" />—
-                  </p>
+                  <Link
+                    href={`/dashboard/recruiter/add-jobs/${job._id}/applications`}
+                    className="mt-0.5 flex items-center gap-1 text-xs font-semibold text-violet-600 hover:underline"
+                    aria-label={`View applications for ${job.title}`}
+                  >
+                    <Users className="size-3" />
+                    View Applications
+                  </Link>
                 </div>
               </div>
 
