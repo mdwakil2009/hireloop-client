@@ -23,9 +23,10 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { createJob } from "@/lib/actions/Jobs"
-import type { JobData } from "@/lib/job-data";
+import type { JobData } from "@/lib/job-data"
 import { toast } from "@/components/ui/toast"
 import { useRouter } from "next/navigation"
+import { useSession } from "@/lib/auth-client"
 // Base field styling shared by inputs, selects and textareas
 const fieldBase =
   "w-full rounded-lg border border-gray-200 bg-white text-sm text-gray-900 shadow-none placeholder:text-gray-400 focus-visible:border-violet-500 focus-visible:ring-2 focus-visible:ring-violet-500/20"
@@ -70,18 +71,28 @@ function SelectField({
 }
 
 export function AddJobForm() {
+  const { data: session } = useSession()
   const [jobType, setJobType] = useState("Full-time")
   const [remoteAllowed, setRemoteAllowed] = useState(false)
   const router = useRouter()
 
- async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    if (!session?.user?.id) {
+      toast.add({
+        title: "Authentication Required",
+        description: "Please login before posting a job.",
+      })
+      return
+    }
 
     const formData = new FormData(event.currentTarget)
     const get = (key: string) => String(formData.get(key) ?? "")
     const data: JobData = {
       title: get("title"),
       companyName: get("companyName"),
+      recruiterId: session?.user?.id ?? "",
       category: get("category"),
       jobType,
       remoteAllowed,
@@ -94,16 +105,15 @@ export function AddJobForm() {
       qualifications: get("qualifications"),
     }
     console.log("New job data:", data)
- 
+
     const result = await createJob(data)
-    if(result.insertedId){
+    if (result.insertedId) {
       console.log(result)
-       toast.add({
+      toast.add({
         title: "Job Created",
         description: "The Job Has Been Successfully Created ",
       })
       router.push("/dashboard/recruiter/manage-jobs")
-
     }
   }
 
@@ -242,7 +252,7 @@ export function AddJobForm() {
                   <span className="h-2 w-2 rounded-full bg-violet-600" />
                   <h2 className="text-base font-semibold text-gray-900">
                     2. Location, Compensation & Timeline
-                  </h2> 
+                  </h2>
                 </div>
 
                 {/* Remote Toggle */}

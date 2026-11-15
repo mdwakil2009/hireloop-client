@@ -104,14 +104,14 @@ export default async function JobApplicationsPage({
 
           <div className="min-w-0">
             <div className="mb-1 flex flex-wrap items-center gap-2 text-xs text-gray-400">
-              <span>Manage Jobs</span>
+              <span>Manage Jobs</span>  
               <span>/</span>
               <span className="max-w-[160px] truncate font-medium text-violet-600">
                 {job.title}
               </span>
               <span>/</span>
               <span>Applications</span>
-            </div>
+            </div>      
 
             <h1 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
               Applications

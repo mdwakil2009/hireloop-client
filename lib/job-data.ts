@@ -13,21 +13,23 @@ export type JobStatus = "Active" | "Inactive"
  * (lib/actions/Jobs) to the API.
  */
 export interface JobData {
-  _id?: string;
-  title: string;
-  companyName: string;
-  category: string;
-  jobType: string;
-  remoteAllowed: boolean;
-  location: string;
-  deadline: string;
-  salaryMin: string;
-  salaryMax: string;
-  salaryFrequency: string;
-  responsibilities: string;
-  qualifications: string;
+  _id?: string
+  title: string
+  companyName: string
+  recruiterId: string
+  companyId?: string
+  category: string
+  jobType: string
+  remoteAllowed: boolean
+  location: string
+  deadline: string
+  salaryMin: string
+  salaryMax: string
+  salaryFrequency: string
+  responsibilities: string
+  qualifications: string
   /** Listing metadata the API assigns — not collected by the Add Jobs form. */
-  applicants?: number;
-  status?: JobStatus;
-  posted?: string;
+  applicants?: number
+  status?: JobStatus
+  posted?: string
 }

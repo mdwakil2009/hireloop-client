@@ -19,7 +19,19 @@ const PLAN_FEATURES = [
   "Premium job insights",
 ]
 
-export default function PaymentPage() {
+export default async function PaymentPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ canceled?: string }>
+}) {
+  const { canceled } = await searchParams
+
+  if (canceled) {
+    console.log(
+      "Order canceled -- continue to shop around and check out when you're ready."
+    )
+  }
+
   return (
     <main className="min-h-svh bg-gray-50 px-4 py-8 text-gray-900 md:py-12">
       <div className="mx-auto w-full max-w-md">
@@ -103,8 +115,18 @@ export default function PaymentPage() {
           </div>
 
           {/* Pay button (Stripe checkout comes here later) */}
-          <div className="mt-5">
-            <PayButton amount={PLAN_PRICE} label="Pay" />
+          <div className="mt-5 flex justify-center">
+            <form
+              action="/api/checkout_sessions"
+              method="POST"
+              className="w-full"
+            >
+              <section className="w-full">
+                <button  role="link" className="w-full">
+                  <PayButton amount={PLAN_PRICE} label="Checkout" />
+                </button>
+              </section>
+            </form>
           </div>
 
           {/* Security note */}

@@ -9,6 +9,7 @@ import type { JobApplication } from "@/lib/application-data"
 
 import { applyToJob } from "@/lib/actions/Jobs"
 import { getApplications, getApplicationsCount } from "@/lib/api/applications"
+import { GetUserPremiumById } from "@/lib/api/user"
 
 export function ApplyButton({ job }: { job: JobData }) {
   const router = useRouter()
@@ -21,13 +22,18 @@ export function ApplyButton({ job }: { job: JobData }) {
       router.push(`/sign-in?redirectTo=/browse-jobs/${job._id}`)
       return
     } else if (user.role == "seeker") {
+
+      // is premium user
+      const premiumResult = await GetUserPremiumById(user.id)
+      console.log("premiumResult",premiumResult)
+
       const countResult = await getApplicationsCount(`applicantId=${user.id}`)
 
       console.log("Logged User ID:", user.id)
       console.log("Count Result:", countResult)
       console.log("Total Applications:", countResult.count)
 
-      if (countResult.count >= 5) {
+      if ( !premiumResult.premium && countResult.count >= 5) {
         console.log("Payment Condition Matched!")
 
         router.push("/payment")
