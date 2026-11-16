@@ -28,7 +28,11 @@ export const getApplications = async (
 export const getApplicationsByJob = async (
   jobId: string
 ): Promise<JobApplication[]> => {
-  return getApplications({ jobId })
+  const applications = await getApplications({ jobId })
+
+  // Safety net: also filter here, so the page shows only this job's
+  // applications even if the backend's ?jobId= filter is ever removed.
+  return applications.filter((application) => application.jobId === jobId)
 }
 export const getApplicationsCount = async (
     query: string
