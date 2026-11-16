@@ -14,6 +14,8 @@ export  const  GetUsers =async()=>{
        
         sortBy: "name", // The field to sort by.
         sortDirection: "desc", // The direction to sort by.
+        // Admin page shows every account — better-auth pages listUsers by default.
+        limit: 100,
     },
     // This endpoint requires session cookies.
     headers: await headers(),
