@@ -1,5 +1,5 @@
 import type { UserRole } from "@/lib/user-data"
-
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || `http://localhost:5000`
 /**
  * STUB — change a user's role on the backend.
  *
@@ -16,17 +16,30 @@ import type { UserRole } from "@/lib/user-data"
  * Once implemented, return `{ ok: true }` (and throw / `{ ok: false, message }`
  * on failure so the UI shows an error toast).
  */
-export const updateUserRole = async (
-  userId: string,
-  data: { role: UserRole }
-): Promise<{ ok: boolean; message?: string }> => {
-  console.log(
-    `[stub] updateUserRole called — user ${userId} → ${data.role} (not implemented yet)`
-  )
+// export const updateUserRole = async (
+//   userId: string,
+//   data: { role: UserRole }
+// ): Promise<{ ok: boolean; message?: string }> => {
+//   console.log(
+//     `[stub] updateUserRole called — user ${userId} → ${data.role} (not implemented yet)`
+//   )
 
-  return {
-    ok: false,
-    message:
-      "Role updates are not wired to the backend yet — implement updateUserRole in lib/actions/users.ts.",
-  }
-}
+//   return {
+//     ok: false,
+//     message:
+//       "Role updates are not wired to the backend yet — implement updateUserRole in lib/actions/users.ts.",
+//   }
+// }
+
+export const updateUserRole = async(userId: string, data: { role: UserRole }) => {
+  const response = await fetch(`${BASE_URL}/users/${userId}/role`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  return response.json();
+};
+

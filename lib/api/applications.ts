@@ -1,4 +1,6 @@
+"use server"
 import type { JobApplication } from "@/lib/application-data"
+import { authFetch } from "../core/server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || `http://localhost:5000`
 
@@ -16,11 +18,9 @@ export const getApplications = async (
 
   if (params.userId) query.set("applicantId", params.userId)
   if (params.jobId) query.set("jobId", params.jobId)
-
-  const queryString = query.toString()
-  const response = await fetch(
-    `${BASE_URL}/applications${queryString ? `?${queryString}` : ""}`
-  )
+    const queryString = query.toString()
+  const api =  `${BASE_URL}/applications${queryString ? `?${queryString}` : ""}`
+  const response = await authFetch(api)
   return response.json()
 }
 

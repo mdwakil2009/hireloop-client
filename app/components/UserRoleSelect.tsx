@@ -53,6 +53,7 @@ export function UserRoleSelect({
 
     try {
       const result = await updateUserRole(userId, { role: newRole })
+      console.log("updateUserRole result:", result)
 
       if (result.ok) {
         toast.add({

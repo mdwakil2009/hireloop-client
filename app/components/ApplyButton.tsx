@@ -8,7 +8,7 @@ import { JobData } from "@/lib/job-data"
 import type { JobApplication } from "@/lib/application-data"
 
 import { applyToJob } from "@/lib/actions/Jobs"
-import { getApplications, getApplicationsCount } from "@/lib/api/applications"
+import {  getApplicationsCount } from "@/lib/api/applications"
 import { GetUserPremiumById } from "@/lib/api/user"
 
 export function ApplyButton({ job }: { job: JobData }) {

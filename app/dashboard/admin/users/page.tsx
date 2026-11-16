@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/table"
 import { UserRoleBadge } from "@/app/components/UserRoleBadge"
 import { UserRoleSelect } from "@/app/components/UserRoleSelect"
-import { GetUsers } from "@/lib/api/user"
+import { GetUsers } from "@/lib/actions/better-auth-users"
 import { roleLabels, type AdminUser, type UserRole } from "@/lib/user-data"
 
 export const metadata: Metadata = {
