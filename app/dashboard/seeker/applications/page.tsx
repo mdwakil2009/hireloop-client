@@ -39,7 +39,9 @@ export default async function MyApplicationPage() {
   const session =  await auth.api.getSession({
           headers:await headers()
         })
-        const applications: JobApplication[] = await getApplications(`applicantId=${session?.user.id}`)
+        const applications: JobApplication[] = await getApplications({
+          userId: session?.user.id,
+        })
   // Stats computed from the list so they stay correct when real data loads
   const total = applications.length
   const shortlisted = applications.filter(

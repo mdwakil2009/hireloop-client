@@ -1,14 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import {
-  ArrowLeft,
-  Award,
-  BadgeCheck,
-  Mail,
-  Send,
-  XCircle,
-} from "lucide-react"
+import { ArrowLeft, Award, BadgeCheck, Mail, Send, XCircle } from "lucide-react"
 
 import {
   Table,
@@ -21,10 +14,10 @@ import {
 import { ApplicationStatusBadge } from "@/app/components/ApplicationStatusBadge"
 import { ApplicationStatusSelect } from "@/app/components/ApplicationStatusSelect"
 import { JobCategoryIcon } from "@/app/components/JobCategoryIcon"
-import { getApplicationsByJob } from "@/lib/api/applications"
 import { getJobById } from "@/lib/api/jobs"
 import { formatRelativeTime } from "@/lib/job-utils"
 import type { JobApplication } from "@/lib/application-data"
+import { getApplicationsByJob } from "@/lib/api/applications"
 
 export const metadata: Metadata = {
   title: "Job Applications | Hireloop",
@@ -73,6 +66,7 @@ export default async function JobApplicationsPage({
   const job = await getJobById(id).catch(() => null)
   if (!job) notFound()
 
+  // Only the applications for THIS job (server-side ?jobId= filter)
   const applications: JobApplication[] = await getApplicationsByJob(id)
 
   // Stats derived from the list so they stay correct as data changes
@@ -80,8 +74,7 @@ export default async function JobApplicationsPage({
   const shortlisted = applications.filter(
     (a) => a.status === "Shortlisted"
   ).length
-  const interviews = applications.filter((a) => a.status === "Interview")
-    .length
+  const interviews = applications.filter((a) => a.status === "Interview").length
   const rejected = applications.filter((a) => a.status === "Rejected").length
 
   return (
@@ -104,14 +97,14 @@ export default async function JobApplicationsPage({
 
           <div className="min-w-0">
             <div className="mb-1 flex flex-wrap items-center gap-2 text-xs text-gray-400">
-              <span>Manage Jobs</span>  
+              <span>Manage Jobs</span>
               <span>/</span>
               <span className="max-w-[160px] truncate font-medium text-violet-600">
                 {job.title}
               </span>
               <span>/</span>
               <span>Applications</span>
-            </div>      
+            </div>
 
             <h1 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
               Applications
@@ -190,32 +183,23 @@ export default async function JobApplicationsPage({
             </TableHeader>
 
             <TableBody>
-              {applications.map((application, index) => (
+              {applications.map((application) => (
                 <TableRow
-                  key={application._id || `${application.userId}-${index}`}
-                  className="h-[66px] border-b border-gray-100 transition-colors hover:bg-violet-50/30"
+                  key={application._id}
+                  className="h-[66px] border-b border-gray-100"
                 >
                   <TableCell className="pl-4">
-                    <div className="flex items-center gap-2.5">
-                      {/* Avatar box with the email initial */}
-                      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-xs font-bold text-violet-600 uppercase">
-                        {application.email.charAt(0)}
-                      </div>
-
-                      <p className="max-w-[180px] truncate text-xs font-semibold text-gray-800">
-                        {application.email.split("@")[0]}
-                      </p>
-                    </div>
-                  </TableCell>
-
-                  <TableCell>
-                    <p className="max-w-[200px] truncate text-xs text-gray-700">
-                      {application.email}
+                    <p className="text-xs font-semibold text-gray-800">
+                      {application.email.split("@")[0]}
                     </p>
                   </TableCell>
 
                   <TableCell>
-                    <p className="text-xs whitespace-nowrap text-gray-700">
+                    <p className="text-xs text-gray-700">{application.email}</p>
+                  </TableCell>
+
+                  <TableCell>
+                    <p className="text-xs text-gray-700">
                       {formatRelativeTime(application.appliedAt)}
                     </p>
                   </TableCell>
@@ -226,7 +210,8 @@ export default async function JobApplicationsPage({
 
                   <TableCell className="pr-3">
                     <ApplicationStatusSelect
-                      applicationId={application._id ?? ""}
+                      key={application._id}
+                      applicationId={application._id}
                       status={application.status}
                     />
                   </TableCell>
@@ -236,41 +221,34 @@ export default async function JobApplicationsPage({
           </Table>
         </div>
 
-        {/* Mobile & Tablet Cards */}
         <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden">
-          {applications.map((application, index) => (
+          {applications.map((application) => (
             <div
-              key={application._id || `${application.userId}-${index}`}
-              className="min-w-0 rounded-xl border border-gray-200 bg-white p-3.5 shadow-sm transition-all hover:border-violet-200 hover:shadow-md"
+              key={application._id}
+              className="min-w-0 rounded-xl border border-gray-200 bg-white p-3.5 shadow-sm"
             >
               <div className="flex items-start justify-between gap-2">
-                <div className="flex min-w-0 items-center gap-2.5">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-xs font-bold text-violet-600 uppercase">
-                    {application.email.charAt(0)}
-                  </div>
+                <div className="min-w-0">
+                  <h3 className="truncate text-sm font-semibold text-gray-800">
+                    {application.email.split("@")[0]}
+                  </h3>
 
-                  <div className="min-w-0">
-                    <h3 className="truncate text-sm font-semibold text-gray-800">
-                      {application.email.split("@")[0]}
-                    </h3>
-                    <p className="mt-0.5 truncate text-[11px] text-gray-400">
-                      {application.email}
-                    </p>
-                  </div>
+                  <p className="mt-0.5 truncate text-[11px] text-gray-400">
+                    {application.email}
+                  </p>
                 </div>
 
                 <ApplicationStatusBadge status={application.status} />
               </div>
 
-              {/* Applied time + status control */}
               <div className="mt-3 flex items-center justify-between gap-2 border-t border-gray-100 pt-3">
-                <span className="flex items-center gap-1 text-[11px] text-gray-400">
-                  <Mail className="size-3" />
+                <span className="text-[11px] text-gray-400">
                   Applied {formatRelativeTime(application.appliedAt)}
                 </span>
 
                 <ApplicationStatusSelect
-                  applicationId={application._id ?? ""}
+                  key={application._id}
+                  applicationId={application._id}
                   status={application.status}
                 />
               </div>

@@ -18,7 +18,12 @@ export type ApplicationStatus =
  * can render without looking the job up again.
  */
 export interface JobApplication {
-  _id?: string
+  /**
+   * MongoDB document id — always present on applications read from the
+   * database (the PATCH status update targets it). New applications are
+   * typed as Omit<JobApplication, "_id"> instead.
+   */
+  _id: string
   /** The job that was applied to (add-jobs collection _id). */
   jobId: string
   /** The seeker (better-auth user id). */

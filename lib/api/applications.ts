@@ -3,27 +3,32 @@ import type { JobApplication } from "@/lib/application-data"
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || `http://localhost:5000`
 
 /**
- * Fetch job applications, optionally filtered by the seeker's user id
- * (e.g. getApplications(user.id) for the My Applications page).
+ * Fetch job applications with optional filters. The params are named
+ * explicitly so a jobId can never be sent as a userId by mistake:
+ *   - getApplications({ userId })  → a seeker's own applications
+ *   - getApplications({ jobId })   → applications for one job
+ * The backend maps `applicantId` → userId field.
  */
 export const getApplications = async (
-  userId?: string
+  params: { userId?: string; jobId?: string } = {}
 ): Promise<JobApplication[]> => {
-  const query = userId ? `?userId=${encodeURIComponent(userId)}` : ""
-  const response = await fetch(`${BASE_URL}/applications${query}`)
+  const query = new URLSearchParams()
+
+  if (params.userId) query.set("applicantId", params.userId)
+  if (params.jobId) query.set("jobId", params.jobId)
+
+  const queryString = query.toString()
+  const response = await fetch(
+    `${BASE_URL}/applications${queryString ? `?${queryString}` : ""}`
+  )
   return response.json()
 }
 
-/**
- * Applications for one job (recruiter's application review page).
- * The backend does not filter by jobId yet, so the filtering happens
- * here — swap to a server-side ?jobId= filter once it exists.
- */
+/** Applications for one job (recruiter's application review page). */
 export const getApplicationsByJob = async (
   jobId: string
 ): Promise<JobApplication[]> => {
-  const all = await getApplications()
-  return all.filter((application) => application.jobId === jobId)
+  return getApplications({ jobId })
 }
 export const getApplicationsCount = async (
     query: string
