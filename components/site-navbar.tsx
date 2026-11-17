@@ -74,6 +74,19 @@ const links = [
             {session?.user ? (
               <>
                 <div className="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2">
+                  {session.user.image ? (
+                    // Plain <img> (not next/image) so any uploaded image URL
+                    // works without configuring remotePatterns per domain.
+                    <img
+                      src={session.user.image}
+                      alt={session.user.name ?? "Profile"}
+                      className="size-6 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
+                      {(session.user.name ?? "U").charAt(0).toUpperCase()}
+                    </span>
+                  )}
                   <span className="text-sm font-medium text-blue-600">
                     Welcome,
                   </span>

@@ -7,6 +7,7 @@ import {
   Building2,
   ClipboardList,
   CreditCard,
+  Home,
   LayoutDashboard,
   PlusCircle,
   Search,
@@ -92,20 +93,60 @@ function roleFromPathname(pathname: string): Role | null {
   return dashboardRoles.includes(segment as Role) ? (segment as Role) : null
 }
 
-export function DashboardSidebar() {                                                          
+export function DashboardSidebar() {
   const { data: session } = useSession()
   const pathname = usePathname()
   const role =
     roleFromPathname(pathname) ?? ((session?.user?.role as Role | undefined) || "seeker")
   const items = menuItemByRole[role]
 
+  const user = session?.user
+  // Display role: prefer the signed-in user's role, fall back to the section
+  // the user is browsing (derived from the pathname).
+  const displayRole = (user?.role as Role | undefined) ?? role
+
   return (
     <Sidebar>
-      <SidebarHeader />
+      <SidebarHeader>
+        {/* Identity — signed-in user's name + role */}
+        <div className="flex items-center gap-2.5 px-2 py-1.5">
+          {user?.image ? (
+            // Plain <img> (not next/image) so any uploaded image URL works
+            // without configuring remotePatterns per domain.
+            <img
+              src={user.image}
+              alt={user.name ?? "Profile"}
+              className="size-8 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-violet-50 text-xs font-bold text-violet-600">
+              {(user?.name || "U").charAt(0).toUpperCase()}
+            </span>
+          )}
+
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-gray-900">
+              {user?.name ?? "User"}
+            </p>
+            <p className="text-[10px] font-medium text-gray-500 capitalize">
+              {displayRole}
+            </p>
+          </div>
+        </div>
+      </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
           <SidebarMenu>
+            {/* Shared link back to the public home page (all roles) */}
+            <SidebarMenuItem>
+              <SidebarMenuButton render={<Link href="/" />}>
+                <Home />
+                <span>Home</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
             {items.map((item) => (
               <SidebarMenuItem key={item.id}>
                 <SidebarMenuButton render={<Link href={item.url} />}>

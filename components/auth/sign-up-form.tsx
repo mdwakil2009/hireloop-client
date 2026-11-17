@@ -16,7 +16,6 @@ const fieldClasses =
 const roles = [
   { value: "seeker", label: "Job Seeker" },
   { value: "recruiter", label: "Recruiter" },
-  { value: "admin", label: "Admin" },
 ] as const;
 
 type Role = (typeof roles)[number]["value"];
@@ -27,6 +26,20 @@ export function SignUpForm() {
   const [role, setRole] = useState<Role>("seeker");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
+  // Holds the picked profile image. Upload (to storage/backend) is to be
+  // implemented later — only the onChange handler is wired for now.
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+
+  // TODO: implement the actual upload (e.g. upload `profileImage` to a
+  // storage service, then pass the resulting URL to signUp.email as `image`).
+  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      setProfileImage(null);
+      return;
+    }
+    setProfileImage(file);
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -119,7 +132,7 @@ export function SignUpForm() {
             {/* Role */}
             <fieldset className="flex flex-col gap-1.5">
               <legend className="font-manrope text-sm text-white/90">I am a</legend>
-              <div className="grid grid-cols-3 gap-1 rounded-xl border border-white/20 bg-[#101010] p-1">
+              <div className="grid grid-cols-2 gap-1 rounded-xl border border-white/20 bg-[#101010] p-1">
                 {roles.map((option) => (
                   <label
                     key={option.value}
@@ -156,6 +169,23 @@ export function SignUpForm() {
                 placeholder="Jane Doe"
                 className={fieldClasses}
                 autoComplete="name"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="profileImage" className="font-manrope text-sm text-white/90">
+                Profile image
+              </label>
+              <input
+                id="profileImage"
+                name="profileImage"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className={cn(
+                  fieldClasses,
+                  "file:mr-3 file:h-8 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:text-sm file:font-medium file:text-white/90 hover:file:bg-white/20"
+                )}
               />
             </div>
 

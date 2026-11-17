@@ -33,15 +33,14 @@ export const auth = betterAuth({
         // sent in the sign-up body is rejected. The sign-up form sends the
         // picked role as `signupRole` (ignored by field parsing) and this
         // hook — which runs after the plugin's own hooks, so it wins —
-        // applies it, validated server-side, defaulting to "seeker".
+        // applies it, validated server-side. Only "recruiter" is honored:
+        // the Admin option was removed from the sign-up form, so self-
+        // assigning an admin account must not be possible. Default "seeker".
         before: async (user, ctx) => {
           const requested = (
             ctx as { body?: { signupRole?: string } } | undefined
           )?.body?.signupRole
-          const role =
-            requested === "recruiter" || requested === "admin"
-              ? requested
-              : "seeker"
+          const role = requested === "recruiter" ? "recruiter" : "seeker"
           return { data: { ...user, role } }
         },
       },
