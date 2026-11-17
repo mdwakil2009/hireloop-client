@@ -3,12 +3,13 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 
 import logoUrl from "@/app/images/logo.png"
 import { cn } from "@/lib/utils"
 import { authClient } from "@/lib/auth-client"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
+import { toast } from "@/components/ui/toast"
 
 const fieldClasses =
   "h-12 w-full rounded-xl border border-white/20 bg-[#101010] px-4 text-base text-white outline-none transition-colors placeholder:text-white/50 hover:border-white/30 focus:border-[#5C53FE] focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
@@ -20,34 +21,48 @@ type SignInData = {
 export function SignInForm() {
   const searchParams = useSearchParams()
   const  redirectTo = searchParams.get("redirectTo") ?? "/"
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
-  const [captured, setCaptured] = useState<Record<string, string> | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  event.preventDefault()
+    event.preventDefault()
 
-  const formdata = new FormData(event.currentTarget)
+    // Prevent duplicate submissions while the request is in flight
+    if (isLoading) return
 
-  const res = Object.fromEntries(formdata.entries()) as SignInData
+    const formdata = new FormData(event.currentTarget)
+    const res = Object.fromEntries(formdata.entries()) as SignInData
 
-  const { data, error } = await authClient.signIn.email({
-    email: res.email,
-    password: res.password,
-    rememberMe: res.remember === "on",
-    callbackURL:redirectTo,
-  })
-  if(data){
-    console.log("Sign In Done",data)
-  }
-  if (error) {
-    console.log("Sign In Error:", error)
-    return
-  }
+    setIsLoading(true)
+    try {
+      const { error } = await authClient.signIn.email({
+        email: res.email,
+        password: res.password,
+        rememberMe: res.remember === "on",
+      })
 
- 
+      if (error) {
+        toast.add({
+          title: "Sign In Failed",
+          description:
+            error.message ??
+            "Invalid email or password. Please try again.",
+        })
+        return
+      }
 
-    setCaptured(res as Record<string, string>)
-    console.log("[sign-in] form data:", res)
+      // Signed in — the session cookie is set, notify and continue to the
+      // page the user was heading for (or home).
+      toast.add({
+        title: "Signed In",
+        description: "Welcome back to Hireloop!",
+      })
+      router.push(redirectTo)
+      router.refresh()
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -148,18 +163,14 @@ export function SignInForm() {
 
           <button
             type="submit"
-            className="mt-2 inline-flex h-12 items-center justify-center rounded-xl bg-[#5C53FE] text-base font-medium text-white transition-all outline-none hover:bg-[#5C53FE]/85 focus-visible:ring-3 focus-visible:ring-ring/50 active:translate-y-px"
+            disabled={isLoading}
+            className="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#5C53FE] text-base font-medium text-white transition-all outline-none hover:bg-[#5C53FE]/85 focus-visible:ring-3 focus-visible:ring-ring/50 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Sign In
+            {isLoading && <Loader2 className="size-4 animate-spin" />}
+            {isLoading ? "Signing In…" : "Sign In"}
           </button>
         </form>
       </div>
-
-      {captured && (
-        <p className="mt-4 text-center font-manrope text-sm text-white/60">
-          Form data collected (demo): {JSON.stringify(captured)}
-        </p>
-      )}
 
       <p className="mt-6 text-center font-manrope text-base text-white/70">
         Don&apos;t have an account?{" "}

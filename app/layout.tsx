@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Manrope, Plus_Jakarta_Sans, Space_Mono, Inter_Tight,
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SiteNavbar } from "@/components/site-navbar"
+import { Toaster } from "@/components/ui/toast"
 import { cn } from "@/lib/utils";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
@@ -45,8 +46,11 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          
+
           {children}
+          {/* Global toast container — toasts must render on every page,
+              including sign-in / sign-up / browse-jobs (outside /dashboard) */}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

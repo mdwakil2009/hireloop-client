@@ -8,7 +8,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import logoUrl from "@/app/images/logo.png";
 import { signUp } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/toast";
 
 const fieldClasses =
   "h-12 w-full rounded-xl border border-white/20 bg-[#101010] px-4 text-base text-white outline-none transition-colors placeholder:text-white/50 hover:border-white/30 focus:border-[#5C53FE] focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50";
@@ -27,10 +27,13 @@ export function SignUpForm() {
   const [role, setRole] = useState<Role>("seeker");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
-  const router = useRouter()
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    // Prevent duplicate submissions while the request is in flight
+    if (status === "loading") return;
+
     const form = event.currentTarget;
     const data = Object.fromEntries(new FormData(form)) as {
       name: string;
@@ -50,22 +53,36 @@ export function SignUpForm() {
     setMessage(null);
 
     // Server config: user role comes from lib/auth.ts (additionalFields).
-    const { data: user, error } = await signUp.email({
+    // NOTE: the admin() plugin rejects `role` in the body, so the picked
+    // role travels as `signupRole` and is applied server-side by the
+    // databaseHooks hook in lib/auth.ts (default: "seeker").
+    const { error } = await signUp.email({
       name: data.name,
       email: data.email,
       password: data.password,
-      role,
+      ...({ signupRole: role } as object),
     });
-    router.refresh()
-    router.push("/")
+
     if (error) {
       setStatus("error");
-      setMessage(error.message ?? "Could not create the account. Please try again.");
+      setMessage(
+        error.message ?? "Could not create the account. Please try again."
+      );
+      toast.add({
+        title: "Sign Up Failed",
+        description:
+          error.message ?? "Could not create the account. Please try again.",
+      });
       return;
     }
 
+    // Success — show the "Account created!" panel (existing flow) with a
+    // clear toast. The user clicks "Go to Sign In" to continue.
     setStatus("success");
-    console.log("[sign-up] account created:", user);
+    toast.add({
+      title: "Account Created",
+      description: "Your account was created successfully. You can now sign in.",
+    });
   }
 
   return (

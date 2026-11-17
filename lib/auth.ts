@@ -26,8 +26,29 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
+  databaseHooks: {
+    user: {
+      create: {
+        // The admin() plugin hard-codes `role` to input:false, so a `role`
+        // sent in the sign-up body is rejected. The sign-up form sends the
+        // picked role as `signupRole` (ignored by field parsing) and this
+        // hook — which runs after the plugin's own hooks, so it wins —
+        // applies it, validated server-side, defaulting to "seeker".
+        before: async (user, ctx) => {
+          const requested = (
+            ctx as { body?: { signupRole?: string } } | undefined
+          )?.body?.signupRole
+          const role =
+            requested === "recruiter" || requested === "admin"
+              ? requested
+              : "seeker"
+          return { data: { ...user, role } }
+        },
+      },
+    },
+  },
   plugins: [
-     admin() 
+     admin()
  ],
   database: mongodbAdapter(db, {
     client,
