@@ -40,3 +40,19 @@ export const getApplicationsCount = async (
   const response = await fetch(`${BASE_URL}/applications/count?${query}`)
   return response.json()
 }
+
+// export const createApplication = async (application: Omit<JobApplication, "_id">): Promise<JobApplication> => {
+//   const response = await authFetch(`${BASE_URL}/applications`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(application),
+//   })
+
+//   if (!response.ok) {
+//     throw new Error("Failed to create application")
+//   }
+
+//   return response.json()  
+// }

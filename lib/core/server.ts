@@ -1,4 +1,4 @@
-
+"use server"
 import { redirect } from 'next/navigation';
 import { auth } from '../auth';
 import { headers } from 'next/headers';
@@ -39,4 +39,28 @@ export const  authFetch =async(api:string)=>{
         }
     })
     return res;
+}
+
+
+export const protectedMutation = async (
+  api: string,
+  method: string,
+  data?: unknown
+) => {
+  const token = await getToken()
+
+  if (!token) {
+    throw new Error("Authentication token not found. Please sign in again.")
+  }
+
+  const response = await fetch(api, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: data !== undefined ? JSON.stringify(data) : undefined,
+  })
+
+  return response
 }

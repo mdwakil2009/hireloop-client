@@ -1,4 +1,5 @@
 import type { UserRole } from "@/lib/user-data"
+import { protectedMutation } from "../core/server";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || `http://localhost:5000`
 /**
  * STUB — change a user's role on the backend.
@@ -32,14 +33,9 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || `http://localhost:5000`
 // }
 
 export const updateUserRole = async(userId: string, data: { role: UserRole }) => {
-  const response = await fetch(`${BASE_URL}/users/${userId}/role`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
+  
+  const api = `${BASE_URL}/users/${userId}/role`;
+  const response = await protectedMutation(api, "PATCH", data);
   return response.json();
 };
 
